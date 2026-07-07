@@ -110,6 +110,10 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->id === 1 || $user->hasRole('super-admin')) {
+            return redirect()->route('admin.users.index')->with('error', 'Super Admin user cannot be deleted.');
+        }
+
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
@@ -121,7 +125,18 @@ class UserController extends Controller
             'ids.*' => 'exists:users,id'
         ]);
 
-        User::whereIn('id', $request->ids)->delete();
+        $idsToDelete = collect($request->ids)->filter(function($id) {
+            $user = User::find($id);
+            return $user && $user->id !== 1 && !$user->hasRole('super-admin');
+        })->toArray();
+
+        if (count($idsToDelete) > 0) {
+            User::whereIn('id', $idsToDelete)->delete();
+        }
+
+        if (count($idsToDelete) < count($request->ids)) {
+            return redirect()->route('admin.users.index')->with('warning', 'Some users were deleted, but Super Admin users were skipped.');
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'Selected users deleted successfully.');
     }

@@ -155,20 +155,17 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-3" x-data>
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Edit">
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
 
-                                    <button type="button"
-                                        @click="$dispatch('confirm', {
-                                            title: 'Delete User',
-                                            message: 'Are you sure you want to delete {{ addslashes($user->name) }}? This action cannot be undone.',
-                                            confirmText: 'Delete',
-                                            onConfirm() { document.getElementById('delete-form-{{ $user->id }}').submit(); }
-                                        })"
-                                        class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-1.5 rounded-md transition-colors" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                    @if($user->id !== 1 && !$user->hasRole('super-admin'))
+                                        <button type="button" 
+                                            onclick="confirmDelete('delete-form-{{ $user->id }}', 'the user {{ addslashes($user->name) }}')"
+                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    @endif
 
                                     <form id="delete-form-{{ $user->id }}" action="{{ route('admin.users.destroy', $user) }}" method="POST" class="hidden">
                                         @csrf

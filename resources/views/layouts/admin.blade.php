@@ -18,7 +18,7 @@
     </style>
 </head>
 <body class="font-sans antialiased text-gray-800 dark:text-slate-300 bg-gray-50 dark:bg-slate-900"
-      x-data="{ sidebarOpen: false, sidebarCollapsed: false, darkMode: localStorage.getItem('darkMode') === 'true', toasts: [] }"
+      x-data="{ sidebarOpen: false, sidebarCollapsed: false, darkMode: localStorage.getItem('darkMode') === 'true' }"
       :class="{ 'dark': darkMode }"
       x-init="
           if (darkMode) { document.documentElement.classList.add('dark'); }
@@ -27,9 +27,17 @@
               document.documentElement.classList.toggle('dark', val);
           });
           window.addEventListener('toast', e => {
-              const id = Date.now();
-              toasts.push({ id, ...e.detail });
-              setTimeout(() => { toasts = toasts.filter(t => t.id !== id); }, 5000);
+              Swal.fire({
+                  toast: true,
+                  position: 'top-end',
+                  icon: e.detail.type || 'info',
+                  title: e.detail.message,
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  background: darkMode ? '#1e293b' : '#ffffff',
+                  color: darkMode ? '#f8fafc' : '#0f172a'
+              });
           });
       ">
 
@@ -215,28 +223,46 @@
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
-    <div class="fixed bottom-4 right-4 z-[9999] space-y-2" x-data>
-        <template x-for="toast in toasts" :key="toast.id">
-            <div x-show="true"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-2"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 class="flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border text-sm max-w-sm"
-                 :class="{
-                     'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300': toast.type === 'success',
-                     'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-800 dark:text-red-300': toast.type === 'error',
-                     'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-300': toast.type === 'warning',
-                     'bg-primary-50 dark:bg-primary-900/30 border-primary-200 dark:border-primary-700 text-primary-800 dark:text-primary-300': toast.type === 'info'
-                 }">
-                <span x-text="toast.message"></span>
-                <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="ml-auto flex-shrink-0 opacity-70 hover:opacity-100">&times;</button>
-            </div>
-        </template>
-    </div>
+    <!-- SweetAlert2 Session Toasts -->
+    @if(session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const isDark = document.documentElement.classList.contains('dark');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: "{{ session('success') ? 'success' : 'error' }}",
+                    title: "{!! addslashes(session('success') ?? session('error')) !!}",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: isDark ? '#1e293b' : '#ffffff',
+                    color: isDark ? '#f8fafc' : '#0f172a'
+                });
+            });
+        </script>
+    @endif
 
-    <!-- Confirm Dialog -->
-    <x-confirm-dialog />
-
+    <!-- Include SweetAlert2 Global Delete Confirmation -->
+    <script>
+        function confirmDelete(formId, itemName = 'this item') {
+            const isDark = document.documentElement.classList.contains('dark');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to delete " + itemName + ". This cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!',
+                background: isDark ? '#1e293b' : '#ffffff',
+                color: isDark ? '#f8fafc' : '#0f172a'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            })
+        }
+    </script>
 </body>
 </html>

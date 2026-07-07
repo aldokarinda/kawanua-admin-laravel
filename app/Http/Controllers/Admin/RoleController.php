@@ -66,6 +66,10 @@ class RoleController extends Controller
             'permissions' => 'array'
         ]);
 
+        if ($role->name === 'super-admin' && $request->name !== 'super-admin') {
+            return redirect()->back()->with('error', 'Cannot change the name of the super-admin role.');
+        }
+
         $role->update([
             'name' => $request->name,
             'description' => $request->description
@@ -82,6 +86,10 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        if ($role->name === 'super-admin') {
+            return redirect()->route('admin.roles.index')->with('error', 'Super Admin role cannot be deleted.');
+        }
+
         $role->delete();
         return redirect()->route('admin.roles.index')->with('success', 'Role deleted successfully.');
     }

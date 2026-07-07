@@ -54,9 +54,9 @@
                                     <a href="{{ route('admin.menus.edit', $menu) }}" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" onsubmit="return confirm('Delete this menu?');" class="inline">
+                                    <form id="delete-form-{{ $menu->id }}" action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-1.5 rounded-md transition-colors" title="Delete">
+                                        <button type="button" onclick="confirmDelete('delete-form-{{ $menu->id }}', 'the menu {{ addslashes($menu->name) }}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors" title="Delete">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -93,9 +93,9 @@
                                                     <a href="{{ route('admin.menus.edit', $child) }}" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <form action="{{ route('admin.menus.destroy', $child) }}" method="POST" onsubmit="return confirm('Delete this sub-menu?');" class="inline">
+                                                    <form id="delete-form-{{ $child->id }}" action="{{ route('admin.menus.destroy', $child) }}" method="POST" class="inline">
                                                         @csrf @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-1.5 rounded-md transition-colors" title="Delete">
+                                                        <button type="button" onclick="confirmDelete('delete-form-{{ $child->id }}', 'the sub-menu {{ addslashes($child->name) }}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors" title="Delete">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>

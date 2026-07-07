@@ -60,10 +60,10 @@
                                         <a href="{{ route('admin.permissions.edit', $perm) }}" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <form action="{{ route('admin.permissions.destroy', $perm) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this permission?');">
+                                        <form id="delete-form-{{ $perm->id }}" action="{{ route('admin.permissions.destroy', $perm) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-1.5 rounded-md transition-colors" title="Delete">
+                                            <button type="button" onclick="confirmDelete('delete-form-{{ $perm->id }}', 'the permission {{ addslashes($perm->name) }}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors" title="Delete">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
