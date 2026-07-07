@@ -18,10 +18,22 @@ class DatabaseSeeder extends Seeder
         // 2. Define standard permissions grouped by module
         $permissions = [
             'dashboard.view',
-            'user.view', 'user.create', 'user.edit', 'user.delete',
-            'role.view', 'role.create', 'role.edit', 'role.delete',
-            'permission.view', 'permission.create', 'permission.edit', 'permission.delete',
-            'menu.view', 'menu.create', 'menu.edit', 'menu.delete',
+            'user.view',
+            'user.create',
+            'user.edit',
+            'user.delete',
+            'role.view',
+            'role.create',
+            'role.edit',
+            'role.delete',
+            'permission.view',
+            'permission.create',
+            'permission.edit',
+            'permission.delete',
+            'menu.view',
+            'menu.create',
+            'menu.edit',
+            'menu.delete',
             'audit.view'
         ];
 
@@ -95,7 +107,7 @@ class DatabaseSeeder extends Seeder
                 'order' => 3
             ],
             [
-                'name' => 'Menu Builder',
+                'name' => 'Menus',
                 'slug' => 'menus',
                 'route_name' => 'admin.menus.index',
                 'permission_name' => 'menu.view',
