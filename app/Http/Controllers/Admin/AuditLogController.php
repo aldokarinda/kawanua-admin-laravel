@@ -6,9 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 
-class AuditLogController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class AuditLogController extends Controller implements HasMiddleware
 {
     protected $auditLogService;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:audit.view', only: ['index']),
+        ];
+    }
 
     public function __construct(AuditLogService $auditLogService)
     {

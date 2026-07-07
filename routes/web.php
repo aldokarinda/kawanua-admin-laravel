@@ -36,7 +36,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('audit-logs', [App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('audit_logs.index');
 
     // Security Module
-    Route::prefix('security')->name('security.')->group(function () {
+    Route::prefix('security')->name('security.')->middleware('role:Super Admin')->group(function () {
         Route::get('/', [SecurityController::class, 'index'])->name('index');
 
         // Login History

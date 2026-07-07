@@ -7,9 +7,22 @@ use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class RoleController extends Controller implements HasMiddleware
 {
     protected $roleService;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:role.view', only: ['index']),
+            new Middleware('permission:role.create', only: ['create', 'store']),
+            new Middleware('permission:role.edit', only: ['edit', 'update']),
+            new Middleware('permission:role.delete', only: ['destroy', 'clone']),
+        ];
+    }
 
     public function __construct(RoleService $roleService)
     {

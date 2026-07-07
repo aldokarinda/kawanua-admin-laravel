@@ -8,9 +8,22 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class UserController extends Controller implements HasMiddleware
 {
     protected $userService;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:user.view', only: ['index']),
+            new Middleware('permission:user.create', only: ['create', 'store']),
+            new Middleware('permission:user.edit', only: ['edit', 'update']),
+            new Middleware('permission:user.delete', only: ['destroy', 'bulkDestroy']),
+        ];
+    }
 
     public function __construct(UserService $userService)
     {
