@@ -108,20 +108,105 @@
             </div>
         </div>
 
-        <!-- Charts Placeholder -->
+        <!-- Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
-                <h3 class="font-semibold text-gray-800 dark:text-slate-200 mb-4">Tren Penjualan</h3>
-                <div class="h-48 flex items-center justify-center text-gray-400 dark:text-slate-500 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-gray-200 dark:border-slate-600">
-                    [Charts will be integrated with ApexCharts or Chart.js]
-                </div>
+                <h3 class="font-semibold text-gray-800 dark:text-slate-200 mb-4">User Registration Trend</h3>
+                <div id="registrationChart" class="w-full h-64"></div>
             </div>
             <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
-                <h3 class="font-semibold text-gray-800 dark:text-slate-200 mb-4">Arus Kas</h3>
-                <div class="h-48 flex items-center justify-center text-gray-400 dark:text-slate-500 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-gray-200 dark:border-slate-600">
-                    [Charts will be integrated with ApexCharts or Chart.js]
-                </div>
+                <h3 class="font-semibold text-gray-800 dark:text-slate-200 mb-4">User Activity Status</h3>
+                <div id="userStatusChart" class="w-full h-64 flex justify-center"></div>
             </div>
         </div>
     </div>
+
+    <x-slot:scripts>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const chartData = @json($chartData);
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const textColor = isDarkMode ? '#cbd5e1' : '#64748b'; // slate-300 or slate-500
+                const gridColor = isDarkMode ? '#334155' : '#f1f5f9'; // slate-700 or slate-100
+
+                // Registration Trend Chart (Area Chart)
+                const registrationOptions = {
+                    series: [{
+                        name: 'New Users',
+                        data: chartData.registration_data
+                    }],
+                    chart: {
+                        type: 'area',
+                        height: 250,
+                        toolbar: { show: false },
+                        fontFamily: 'inherit',
+                        foreColor: textColor
+                    },
+                    colors: ['#0ea5e9'], // sky-500
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.4,
+                            opacityTo: 0.05,
+                            stops: [0, 90, 100]
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 3 },
+                    xaxis: {
+                        categories: chartData.registration_labels,
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                        grid: { show: true, strokeDashArray: 4 }
+                    },
+                    yaxis: {
+                        labels: { formatter: (value) => { return Math.round(value) } }
+                    },
+                    grid: {
+                        borderColor: gridColor,
+                        strokeDashArray: 4,
+                        xaxis: { lines: { show: true } },
+                        yaxis: { lines: { show: true } }
+                    }
+                };
+
+                const registrationChart = new ApexCharts(document.querySelector("#registrationChart"), registrationOptions);
+                registrationChart.render();
+
+                // User Status Chart (Donut Chart)
+                const userStatusOptions = {
+                    series: chartData.user_status_data,
+                    chart: {
+                        type: 'donut',
+                        height: 250,
+                        fontFamily: 'inherit',
+                        foreColor: textColor
+                    },
+                    labels: ['Active Users', 'Inactive Users'],
+                    colors: ['#10b981', '#f43f5e'], // emerald-500, rose-500
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '70%',
+                                labels: {
+                                    show: true,
+                                    name: { show: true },
+                                    value: { show: true, formatter: (val) => val },
+                                    total: { show: true, showAlways: false, label: 'Total', formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) }
+                                }
+                            }
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    legend: { position: 'bottom' },
+                    stroke: { show: false }
+                };
+
+                const userStatusChart = new ApexCharts(document.querySelector("#userStatusChart"), userStatusOptions);
+                userStatusChart.render();
+            });
+        </script>
+    </x-slot:scripts>
 </x-admin-layout>
