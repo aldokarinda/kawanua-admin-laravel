@@ -4,30 +4,25 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index(Request $request)
     {
-        $query = User::with('roles');
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('is_active', $request->status === 'active');
-        }
-
-        $users = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+        $users = $this->userService->getPaginatedUsers(
+            $request->search,
+            $request->status
+        )->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }
@@ -40,7 +35,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
@@ -50,18 +45,9 @@ class UserController extends Controller
             'roles' => 'array'
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'department' => $request->department,
-            'phone_number' => $request->phone_number,
-            'is_active' => $request->has('is_active'),
-        ]);
-
-        if($request->has('roles')) {
-            $user->assignRole($request->roles);
-        }
+        $data['is_active'] = $request->has('is_active');
+        
+        $this->userService->createUser($data);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
@@ -75,7 +61,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
@@ -85,36 +71,19 @@ class UserController extends Controller
             'roles' => 'array'
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'department' => $request->department,
-            'phone_number' => $request->phone_number,
-            'is_active' => $request->has('is_active'),
-        ];
+        $data['is_active'] = $request->has('is_active');
 
-        if($request->password) {
-            $data['password'] = Hash::make($request->password);
-        }
-
-        $user->update($data);
-
-        if($request->has('roles')) {
-            $user->syncRoles($request->roles);
-        } else {
-            $user->syncRoles([]);
-        }
+        $this->userService->updateUser($user, $data);
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
     {
-        if ($user->id === 1 || $user->hasRole('super-admin')) {
+        if (!$this->userService->deleteUser($user)) {
             return redirect()->route('admin.users.index')->with('error', 'Super Admin user cannot be deleted.');
         }
 
-        $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 
@@ -125,16 +94,9 @@ class UserController extends Controller
             'ids.*' => 'exists:users,id'
         ]);
 
-        $idsToDelete = collect($request->ids)->filter(function($id) {
-            $user = User::find($id);
-            return $user && $user->id !== 1 && !$user->hasRole('super-admin');
-        })->toArray();
+        $allDeleted = $this->userService->bulkDeleteUsers($request->ids);
 
-        if (count($idsToDelete) > 0) {
-            User::whereIn('id', $idsToDelete)->delete();
-        }
-
-        if (count($idsToDelete) < count($request->ids)) {
+        if (!$allDeleted) {
             return redirect()->route('admin.users.index')->with('warning', 'Some users were deleted, but Super Admin users were skipped.');
         }
 

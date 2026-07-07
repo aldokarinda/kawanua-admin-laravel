@@ -3,82 +3,65 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
     public function index()
     {
-        // Spatie roles use users() relation if using proper trait
-        $roles = Role::withCount(['users', 'permissions'])->paginate(10);
+        $roles = $this->roleService->getPaginatedRoles();
         return view('admin.roles.index', compact('roles'));
     }
 
     public function create()
     {
-        $permissions = Permission::all();
-        // Group permissions by prefix (e.g. user.view -> user)
-        $groupedPermissions = $permissions->groupBy(function($item) {
-            return explode('.', $item->name)[0] ?? 'general';
-        });
+        $permissions = $this->roleService->getAllPermissions();
+        $groupedPermissions = $this->roleService->getGroupedPermissions();
 
         return view('admin.roles.create', compact('groupedPermissions', 'permissions'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:roles,name',
             'description' => 'nullable|string',
             'permissions' => 'array'
         ]);
 
-        $role = Role::create([
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
-        
-        if($request->has('permissions')) {
-            $role->syncPermissions($request->permissions);
-        }
+        $this->roleService->createRole($data);
 
         return redirect()->route('admin.roles.index')->with('success', 'Role created successfully.');
     }
 
     public function edit(Role $role)
     {
-        $permissions = Permission::all();
-        $groupedPermissions = $permissions->groupBy(function($item) {
-            return explode('.', $item->name)[0] ?? 'general';
-        });
-
+        $permissions = $this->roleService->getAllPermissions();
+        $groupedPermissions = $this->roleService->getGroupedPermissions();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
+
         return view('admin.roles.edit', compact('role', 'groupedPermissions', 'permissions', 'rolePermissions'));
     }
 
     public function update(Request $request, Role $role)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:roles,name,'.$role->id,
             'description' => 'nullable|string',
             'permissions' => 'array'
         ]);
 
-        if ($role->name === 'super-admin' && $request->name !== 'super-admin') {
+        if (!$this->roleService->updateRole($role, $data)) {
             return redirect()->back()->with('error', 'Cannot change the name of the super-admin role.');
-        }
-
-        $role->update([
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
-        
-        if($request->has('permissions')) {
-            $role->syncPermissions($request->permissions);
-        } else {
-            $role->syncPermissions([]);
         }
 
         return redirect()->route('admin.roles.index')->with('success', 'Role updated successfully.');
@@ -86,23 +69,16 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        if ($role->name === 'super-admin') {
+        if (!$this->roleService->deleteRole($role)) {
             return redirect()->route('admin.roles.index')->with('error', 'Super Admin role cannot be deleted.');
         }
 
-        $role->delete();
         return redirect()->route('admin.roles.index')->with('success', 'Role deleted successfully.');
     }
 
     public function clone(Role $role)
     {
-        $newRole = Role::create([
-            'name' => $role->name . ' (Copy)',
-            'description' => $role->description
-        ]);
-
-        $newRole->syncPermissions($role->permissions);
-
+        $this->roleService->cloneRole($role);
         return redirect()->route('admin.roles.index')->with('success', 'Role cloned successfully.');
     }
 }

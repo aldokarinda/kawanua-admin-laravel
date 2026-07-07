@@ -3,24 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AuditLog;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 
 class AuditLogController extends Controller
 {
+    protected $auditLogService;
+
+    public function __construct(AuditLogService $auditLogService)
+    {
+        $this->auditLogService = $auditLogService;
+    }
+
     public function index(Request $request)
     {
-        $query = AuditLog::with('user')->latest();
-
-        if ($request->filled('module')) {
-            $query->where('module', $request->module);
-        }
-
-        if ($request->filled('action')) {
-            $query->where('action', $request->action);
-        }
-
-        $logs = $query->paginate(20)->withQueryString();
+        $logs = $this->auditLogService->getPaginatedLogs(
+            $request->module,
+            $request->action
+        )->withQueryString();
         
         return view('admin.audit.index', compact('logs'));
     }

@@ -3,18 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\PermissionService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
+    protected $permissionService;
+
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
+
     public function index()
     {
-        $permissions = Permission::all();
-        // Group by prefix for the Tree View / Matrix
-        $groupedPermissions = $permissions->groupBy(function($item) {
-            return explode('.', $item->name)[0] ?? 'general';
-        });
+        $permissions = $this->permissionService->getAllPermissions();
+        $groupedPermissions = $this->permissionService->getGroupedPermissions();
 
         return view('admin.permissions.index', compact('groupedPermissions', 'permissions'));
     }
@@ -26,11 +31,11 @@ class PermissionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:permissions,name'
         ]);
 
-        Permission::create(['name' => $request->name]);
+        $this->permissionService->createPermission($data);
 
         return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
@@ -42,18 +47,18 @@ class PermissionController extends Controller
 
     public function update(Request $request, Permission $permission)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|unique:permissions,name,'.$permission->id
         ]);
 
-        $permission->update(['name' => $request->name]);
+        $this->permissionService->updatePermission($permission, $data);
 
         return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
     }
 
     public function destroy(Permission $permission)
     {
-        $permission->delete();
+        $this->permissionService->deletePermission($permission);
         return redirect()->route('admin.permissions.index')->with('success', 'Permission deleted successfully.');
     }
 }
