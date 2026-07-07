@@ -1,0 +1,127 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* ===================================================
+   Kawanua Admin — Color System (CSS Custom Properties)
+   =================================================== */
+:root {
+    --color-primary-50:  #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+
+    --color-sidebar-bg:      #ffffff;
+    --color-sidebar-hover:   #f1f5f9;
+    --color-sidebar-active:  #eff6ff;
+    --color-body-bg:         #f8fafc;
+    --color-card-bg:         #ffffff;
+    --color-border:          #e2e8f0;
+    --color-header-bg:       #ffffff;
+    --color-header-shadow:   0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* --- Dark Mode Overrides --- */
+.dark {
+    --color-primary-50:  #172554;
+    --color-primary-100: #1e3a5f;
+    --color-primary-500: #60a5fa;
+    --color-primary-600: #3b82f6;
+    --color-primary-700: #60a5fa;
+    --color-primary-800: #93c5fd;
+
+    --color-sidebar-bg:      #0f172a;
+    --color-sidebar-hover:   #1e293b;
+    --color-sidebar-active:  #1e3a8a;
+    --color-body-bg:         #0f172a;
+    --color-card-bg:         #1e293b;
+    --color-border:          #334155;
+    --color-header-bg:       #1e293b;
+    --color-header-shadow:   0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* ===================================================
+   Tailwind Component Layer
+   =================================================== */
+@layer components {
+    .popup-grid-item {
+        @apply flex flex-col items-center justify-center p-3 rounded-xl border transition-all;
+    }
+}
+
+/* ===================================================
+   Base Styles
+   =================================================== */
+
+/* Smooth page transition for main content */
+main {
+    animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loader animation */
+.skeleton {
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+}
+.dark .skeleton {
+    background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+    background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Sticky table header */
+.sticky-thead th {
+    @apply sticky top-0 z-20;
+}
+
+/* Sidebar active indicator */
+.sidebar-active-indicator {
+    @apply absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-primary-600;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Toast notification entrance */
+.toast-enter {
+    animation: slideInRight 0.3s ease-out;
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(100%); }
+    to   { opacity: 1; transform: translateX(0); }
+}

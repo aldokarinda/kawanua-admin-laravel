@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* ===================================================
+   Kawanua Admin — Color System (mirrored for guest/app layouts)
+   =================================================== */
+:root {
+    --color-primary-50:  #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+}
+
+.dark {
+    --color-primary-50:  #172554;
+    --color-primary-600: #3b82f6;
+    --color-primary-700: #60a5fa;
+    --color-primary-800: #93c5fd;
+}
+
+@layer components {
+    .kawanua-checkbox {
+        @apply h-4 w-4 rounded border-slate-300 bg-white text-primary-800 shadow-sm transition duration-150 focus:border-primary-700 focus:ring-2 focus:ring-primary-600 focus:ring-offset-2;
+        accent-color: #1e3a8a;
+    }
+}
