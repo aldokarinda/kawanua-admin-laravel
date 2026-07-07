@@ -62,7 +62,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->module }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->ip_address }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                <button class="text-blue-600 hover:underline text-xs" onclick="alert({{ json_encode($log->details) }})">View Details</button>
+                                <button class="text-blue-600 hover:underline text-xs" onclick="showDetails({{ json_encode($log->details) }})">View Details</button>
                             </td>
                         </tr>
                         @empty
@@ -82,3 +82,33 @@
         </div>
     </div>
 </x-admin-layout>
+
+<script>
+    function showDetails(details) {
+        if (!details) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No Details',
+                text: 'There are no additional details for this action.'
+            });
+            return;
+        }
+        
+        let htmlContent = '<div class="text-left bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm overflow-auto max-h-[60vh]">';
+        htmlContent += '<pre class="whitespace-pre-wrap text-gray-700 font-mono text-xs">' + JSON.stringify(details, null, 2) + '</pre>';
+        htmlContent += '</div>';
+
+        Swal.fire({
+            title: 'Audit Log Details',
+            html: htmlContent,
+            width: '600px',
+            showCloseButton: true,
+            showConfirmButton: false,
+            customClass: {
+                title: 'text-lg font-bold text-gray-900',
+                popup: 'rounded-xl',
+                htmlContainer: 'mt-4'
+            }
+        });
+    }
+</script>
