@@ -1,6 +1,6 @@
 <x-admin-layout>
     <div class="py-6 px-4 sm:px-6 lg:px-8">
-        <x-breadcrumb :items="[[&quot;label&quot; => &quot;Dashboard&quot;, &quot;url&quot; => route(&quot;dashboard&quot;)], [&quot;label&quot; => &quot;Security Center&quot;, &quot;url&quot; => route(&quot;admin.security.index&quot;)], [&quot;label&quot; => &quot;Login History&quot;]]" />
+        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard')], ['label' => 'Security Center', 'url' => route('admin.security.index')], ['label' => 'Login History']]" />
         <div class="sm:flex sm:items-center sm:justify-between mb-8">
             <div><h2 class="text-2xl font-bold text-gray-900 dark:text-slate-200">Login History</h2><p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Track all login attempts across the system.</p></div>
             <div class="mt-4 sm:mt-0 flex gap-2">

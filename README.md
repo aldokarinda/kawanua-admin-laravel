@@ -1,6 +1,6 @@
 # Kawanua Admin Laravel
 
-**Kawanua Admin Laravel** is a premium, modern, and lightweight admin dashboard template built on top of Laravel 13, Tailwind CSS, and Alpine.js. It is designed to be "Better Than Mazer", offering a cleaner SaaS-like aesthetic, a dynamic menu builder, and a robust Role-Based Access Control (RBAC) system right out of the box.
+**Kawanua Admin Laravel** is a premium, modern, and lightweight admin dashboard template built on top of Laravel 13, Tailwind CSS, and Alpine.js. It is designed to be "Better Than Mazer", offering a cleaner SaaS-like aesthetic, a dynamic menu builder, a robust Role-Based Access Control (RBAC) system, and a comprehensive Security Suite right out of the box.
 
 ![Kawanua Admin Preview](https://via.placeholder.com/1200x600.png?text=Kawanua+Admin+Laravel+-+Premium+SaaS+Dashboard)
 
@@ -8,11 +8,25 @@
 
 - **Built with Tailwind CSS & Alpine.js**: Lightning fast, zero jQuery, and no bulky CSS frameworks.
 - **Dynamic Menu Builder**: Easily create, manage, and arrange your sidebar menus directly from the database with a visual tree hierarchy builder.
-- **Advanced RBAC System**: Comprehensive User, Role, and Permission management using Laravel's native features.
+- **Advanced RBAC System**: Comprehensive User, Role, and Permission management using Laravel's native features and Spatie Permission.
 - **Premium Split-Pane Forms**: Enterprise-grade UI/UX for form layouts, separating context from inputs for better readability.
 - **Ultimate DataTables**: Clean, beautiful tables with bulk actions, search, filters, and premium icon actions.
 - **Visual Icon Picker**: Pick Bootstrap Icons seamlessly when creating menus instead of pasting SVG codes.
 - **Dark Mode Support**: Native dark mode implementation across the entire dashboard.
+
+### 🛡️ Enterprise Security Suite (New)
+- **Security Dashboard**: High-level statistics on login activity, active IP restrictions, and quick system status.
+- **Two-Factor Authentication (2FA)**: Pure-PHP RFC 6238 TOTP implementation supporting visual setup QR codes, recovery codes, and status audits.
+- **IP Restrictions**: Dynamic whitelisting and blacklisting of specific IP addresses with customizable expiration times.
+- **Session Management**: Monitor active user sessions stored in database driver, view client agent info, and force terminate/logout individual or all active sessions.
+- **Activity Log & Audit Trail**: Granular database audit logs showing exact modifications (`getChanges()`), with modules, actions, IP addresses, and user agents.
+- **Security Settings**: Global panel controls including login rate limiting policies, account lockouts, session session duration thresholds, and 2FA enforcement.
+
+### 🔌 API Authentication Layer (New)
+- **Refresh Token Rotation (RTR)**: Highly secure token system powered by Laravel Sanctum.
+- **Access Token TTL**: Short-lived access tokens valid for 15 minutes.
+- **Refresh Token TTL**: Rotation token valid for 7 days. Single-use rotation prevents token replay attacks.
+- **Breach Containment**: Re-use of any previously rotated refresh token triggers automatic compromise containment, revoking ALL active tokens for that user immediately.
 
 ## 🚀 Getting Started
 
@@ -20,7 +34,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 ### Prerequisites
 
-- PHP >= 8.2
+- PHP >= 8.3
 - Composer
 - Node.js & npm
 - MySQL / PostgreSQL / SQLite
@@ -90,10 +104,11 @@ After running the seeder, you can log in with the default Super Admin account:
 ## 🛠️ Built With
 
 - [Laravel 13](https://laravel.com/) - The PHP Framework for Web Artisans
+- [Laravel Sanctum](https://laravel.com/docs/11.x/sanctum) - Lightweight API Authentication
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
 - [Alpine.js](https://alpinejs.dev/) - A rugged, minimal framework for composing JavaScript behavior in your markup
 - [Bootstrap Icons](https://icons.getbootstrap.com/) - Free, high quality, open source icon library
 
 ## 📄 License
 
-This project is open-sourced software licensed under the [MIT license](LICENSE).
+This project is licensed under the Non-Commercial Software License Agreement. It is **free for personal, educational, and other non-commercial purposes**. Using this software for any commercial purpose requires a paid commercial license. See the [LICENSE](LICENSE) file for details.

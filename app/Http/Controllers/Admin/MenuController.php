@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreMenuRequest;
 use App\Models\Menu;
 use App\Services\MenuService;
 use Illuminate\Http\Request;
@@ -41,20 +42,9 @@ class MenuController extends Controller implements HasMiddleware
         return view('admin.menus.create', compact('parents'));
     }
 
-    public function store(Request $request)
+    public function store(StoreMenuRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'slug' => 'required|string|unique:menus,slug',
-            'parent_id' => 'nullable|exists:menus,id',
-            'icon' => 'nullable|string',
-            'route_name' => 'nullable|string',
-            'url' => 'nullable|string',
-            'permission_name' => 'nullable|string',
-            'order' => 'integer',
-        ]);
-
-        $this->menuService->createMenu($data);
+        $this->menuService->createMenu($request->validated());
 
         return redirect()->route('admin.menus.index')->with('success', 'Menu created successfully.');
     }
@@ -65,20 +55,9 @@ class MenuController extends Controller implements HasMiddleware
         return view('admin.menus.edit', compact('menu', 'parents'));
     }
 
-    public function update(Request $request, Menu $menu)
+    public function update(StoreMenuRequest $request, Menu $menu)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'slug' => 'required|string|unique:menus,slug,'.$menu->id,
-            'parent_id' => 'nullable|exists:menus,id',
-            'icon' => 'nullable|string',
-            'route_name' => 'nullable|string',
-            'url' => 'nullable|string',
-            'permission_name' => 'nullable|string',
-            'order' => 'integer',
-        ]);
-
-        $this->menuService->updateMenu($menu, $data);
+        $this->menuService->updateMenu($menu, $request->validated());
 
         return redirect()->route('admin.menus.index')->with('success', 'Menu updated successfully.');
     }

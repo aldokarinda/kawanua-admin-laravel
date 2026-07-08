@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreIpRestrictionRequest;
 use App\Models\User;
 use App\Services\AuditLogService;
 use App\Services\IpRestrictionService;
@@ -85,8 +86,8 @@ class SecurityController extends Controller
             ->paginate(15);
 
         $stats = [
-            'enabled_count' => \App\Models\TwoFactorAuth::where('enabled', true)->count(),
-            'total_users' => User::count(),
+            'enabled_count' => $this->twoFactorAuthService->getEnabledCount(),
+            'total_users'   => User::count(),
         ];
 
         return view('admin.security.2fa', compact('users', 'stats'));
@@ -164,15 +165,9 @@ class SecurityController extends Controller
         return view('admin.security.ip-restrictions', compact('restrictions', 'stats', 'type'));
     }
 
-    public function ipRestrictionStore(Request $request)
+    public function ipRestrictionStore(StoreIpRestrictionRequest $request)
     {
-        $validated = $request->validate([
-            'ip_address' => 'required|string|max:45',
-            'type' => 'required|in:whitelist,blacklist',
-            'reason' => 'nullable|string|max:255',
-            'expires_at' => 'nullable|date',
-        ]);
-
+        $validated = $request->validated();
         $this->ipRestrictionService->createRestriction($validated);
 
         return redirect()
@@ -244,7 +239,7 @@ class SecurityController extends Controller
                 ->orderBy('last_activity', 'desc')
                 ->get()
                 ->map(function ($session) {
-                    $session->payload = unserialize(base64_decode($session->payload));
+                    $session->payload = json_decode(base64_decode($session->payload), true);
                     return $session;
                 });
         }

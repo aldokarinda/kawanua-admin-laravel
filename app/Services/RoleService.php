@@ -40,7 +40,8 @@ class RoleService
 
     public function updateRole(Role $role, array $data)
     {
-        if ($role->name === 'super-admin' && $data['name'] !== 'super-admin') {
+        if ((strtolower($role->name) === 'super admin' || $role->name === 'super-admin')
+            && strtolower($data['name']) !== 'super admin' && $data['name'] !== 'super-admin') {
             return false;
         }
 
@@ -60,7 +61,7 @@ class RoleService
 
     public function deleteRole(Role $role)
     {
-        if ($role->name === 'super-admin') {
+        if (strtolower($role->name) === 'super admin' || $role->name === 'super-admin') {
             return false;
         }
 

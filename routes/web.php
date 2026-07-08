@@ -26,7 +26,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\SecurityController;
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'ip.restrict'])->prefix('admin')->name('admin.')->group(function () {
     Route::delete('users/bulk-destroy', [UserController::class, 'bulkDestroy'])->name('users.bulk-destroy');
     Route::resource('users', UserController::class);
     Route::post('roles/{role}/clone', [RoleController::class, 'clone'])->name('roles.clone');

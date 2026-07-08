@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -46,20 +49,11 @@ class UserController extends Controller implements HasMiddleware
         return view('admin.users.create', compact('roles'));
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'department' => 'nullable|string|max:255',
-            'phone_number' => 'nullable|string|max:20',
-            'is_active' => 'boolean',
-            'roles' => 'array'
-        ]);
-
+        $data = $request->validated();
         $data['is_active'] = $request->has('is_active');
-        
+
         $this->userService->createUser($data);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
@@ -72,18 +66,9 @@ class UserController extends Controller implements HasMiddleware
         return view('admin.users.edit', compact('user', 'roles', 'userRoles'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'department' => 'nullable|string|max:255',
-            'phone_number' => 'nullable|string|max:20',
-            'is_active' => 'boolean',
-            'roles' => 'array'
-        ]);
-
+        $data = $request->validated();
         $data['is_active'] = $request->has('is_active');
 
         $this->userService->updateUser($user, $data);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StorePermissionRequest;
 use App\Services\PermissionService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
@@ -42,13 +43,9 @@ class PermissionController extends Controller implements HasMiddleware
         return view('admin.permissions.create');
     }
 
-    public function store(Request $request)
+    public function store(StorePermissionRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|unique:permissions,name'
-        ]);
-
-        $this->permissionService->createPermission($data);
+        $this->permissionService->createPermission($request->validated());
 
         return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
@@ -58,13 +55,9 @@ class PermissionController extends Controller implements HasMiddleware
         return view('admin.permissions.edit', compact('permission'));
     }
 
-    public function update(Request $request, Permission $permission)
+    public function update(StorePermissionRequest $request, Permission $permission)
     {
-        $data = $request->validate([
-            'name' => 'required|string|unique:permissions,name,'.$permission->id
-        ]);
-
-        $this->permissionService->updatePermission($permission, $data);
+        $this->permissionService->updatePermission($permission, $request->validated());
 
         return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
     }

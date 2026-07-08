@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreRoleRequest;
+use App\Http\Requests\Admin\UpdateRoleRequest;
 use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -43,15 +45,9 @@ class RoleController extends Controller implements HasMiddleware
         return view('admin.roles.create', compact('groupedPermissions', 'permissions'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|unique:roles,name',
-            'description' => 'nullable|string',
-            'permissions' => 'array'
-        ]);
-
-        $this->roleService->createRole($data);
+        $this->roleService->createRole($request->validated());
 
         return redirect()->route('admin.roles.index')->with('success', 'Role created successfully.');
     }
@@ -65,15 +61,9 @@ class RoleController extends Controller implements HasMiddleware
         return view('admin.roles.edit', compact('role', 'groupedPermissions', 'permissions', 'rolePermissions'));
     }
 
-    public function update(Request $request, Role $role)
+    public function update(UpdateRoleRequest $request, Role $role)
     {
-        $data = $request->validate([
-            'name' => 'required|string|unique:roles,name,'.$role->id,
-            'description' => 'nullable|string',
-            'permissions' => 'array'
-        ]);
-
-        if (!$this->roleService->updateRole($role, $data)) {
+        if (!$this->roleService->updateRole($role, $request->validated())) {
             return redirect()->back()->with('error', 'Cannot change the name of the super-admin role.');
         }
 

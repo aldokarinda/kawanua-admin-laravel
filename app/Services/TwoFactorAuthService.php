@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\TwoFactorAuth;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
-use OTPHP\TOTP;
+use App\Services\SimpleTOTP as TOTP;
 use ParagonIE\ConstantTime\Base32;
 
 class TwoFactorAuthService
@@ -115,6 +115,14 @@ class TwoFactorAuthService
         return TwoFactorAuth::where('user_id', $user->id)
             ->where('enabled', true)
             ->exists();
+    }
+
+    /**
+     * Get total count of users with 2FA enabled.
+     */
+    public function getEnabledCount(): int
+    {
+        return TwoFactorAuth::where('enabled', true)->count();
     }
 
     /**
