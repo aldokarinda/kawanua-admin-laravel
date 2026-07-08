@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
-        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.webp') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -26,7 +26,7 @@
                 <!-- Floating Avatar/Logo -->
                 <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
                     <a href="/">
-                        <img src="{{ asset('images/logo.png') }}"
+                        <img src="{{ asset('images/logo.webp') }}"
                              class="w-32 h-32 object-cover rounded-full border-[6px] border-white dark:border-slate-700 shadow-xl ring-4 ring-primary-100 dark:ring-slate-600 transition-transform duration-500 hover:scale-105"
                              alt="Login Logo" />
                     </a>

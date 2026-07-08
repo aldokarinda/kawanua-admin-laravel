@@ -21,7 +21,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Lazy loading optimization for service bindings
+        $this->app->bind(\App\Services\UserService::class, function () {
+            return new \App\Services\UserService();
+        });
+
+        $this->app->bind(\App\Services\RoleService::class, function () {
+            return new \App\Services\RoleService();
+        });
     }
 
     /**
@@ -31,8 +38,6 @@ class AppServiceProvider extends ServiceProvider
     {
         User::observe(UserObserver::class);
         Role::observe(RoleObserver::class);
-        Schema::defaultStringLength(191);
-
         // Force HTTPS in Production
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
@@ -45,6 +50,12 @@ class AppServiceProvider extends ServiceProvider
                 ->numbers()
                 ->symbols()
                 ->uncompromised();
+        });
+
+        // Share sidebar menus to all admin views (cached)
+        View::composer(['layouts.admin', 'components.admin-layout'], function ($view) {
+            $menuService = app(\App\Services\MenuService::class);
+            $view->with('sidebarMenus', $menuService->getActiveMenus());
         });
     }
 }

@@ -18,6 +18,6 @@ class AuditLogService
             $query->where('action', $action);
         }
 
-        return $query->paginate($perPage);
+        return $query->simplePaginate($perPage);
     }
 }

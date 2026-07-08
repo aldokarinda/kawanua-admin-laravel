@@ -1,5 +1,107 @@
 <x-admin-layout>
-    <div class="py-6 px-4 sm:px-6 lg:px-8">
+    <div class="py-6 px-4 sm:px-6 lg:px-8"
+         x-data="{
+                selected: [],
+                selectAll: false,
+                showCreateModal: false,
+                errors: {},
+                formData: {
+                    name: '',
+                    email: '',
+                    password: '',
+                    password_confirmation: '',
+                    department: '',
+                    phone_number: '',
+                    is_active: true,
+                    roles: []
+                },
+                toggleSelectAll() {
+                    this.selected = this.selectAll
+                        ? Array.from(this.$el.querySelectorAll('tbody input[type=checkbox]')).map(cb => cb.value)
+                        : [];
+                },
+                bulkDelete() {
+                    window.dispatchEvent(new CustomEvent('confirm', {
+                        detail: {
+                            title: 'Bulk Delete Users',
+                            message: 'Are you sure you want to delete ' + this.selected.length + ' selected user(s)? This action cannot be undone.',
+                            confirmText: 'Delete',
+                            onConfirm: () => {
+                                const form = document.getElementById('bulk-delete-form');
+                                document.getElementById('bulk-ids').value = this.selected.join(',');
+                                form.submit();
+                            }
+                        }
+                    }));
+                },
+                submitCreateForm() {
+                    this.errors = {};
+                    fetch('{{ route("admin.users.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=&quot;csrf-token&quot;]').getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            name: this.formData.name,
+                            email: this.formData.email,
+                            password: this.formData.password,
+                            password_confirmation: this.formData.password_confirmation,
+                            department: this.formData.department,
+                            phone_number: this.formData.phone_number,
+                            is_active: this.formData.is_active ? 1 : 0,
+                            roles: this.formData.roles
+                        })
+                    })
+                    .then(async response => {
+                        const data = await response.json();
+                        if (response.ok && data.success) {
+                            this.showCreateModal = false;
+                            this.formData = {
+                                name: '',
+                                email: '',
+                                password: '',
+                                password_confirmation: '',
+                                department: '',
+                                phone_number: '',
+                                is_active: true,
+                                roles: []
+                            };
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: data.message || 'User created successfully.',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                            this.reloadTable();
+                        } else {
+                            this.errors = data.errors || { general: data.message || 'An error occurred.' };
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        this.errors = { general: 'Failed to save user.' };
+                    });
+                },
+                reloadTable() {
+                    fetch(window.location.href)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newTable = doc.querySelector('#users-table-container');
+                            if (newTable) {
+                                document.querySelector('#users-table-container').innerHTML = newTable.innerHTML;
+                                this.selected = [];
+                                this.selectAll = false;
+                            }
+                        });
+                }
+            }">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('dashboard')],
@@ -17,38 +119,15 @@
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Export
                 </button>
-                <a href="{{ route('admin.users.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-slate-900 transition-colors">
+                <button type="button" @click="showCreateModal = true" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-slate-900 transition-colors">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Add New User
-                </a>
+                </button>
             </div>
         </div>
 
         <!-- Data Table Container -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
-            x-data="{
-                selected: [],
-                selectAll: false,
-                toggleSelectAll() {
-                    this.selected = this.selectAll
-                        ? Array.from(this.\$el.querySelectorAll('tbody input[type=checkbox]')).map(cb => cb.value)
-                        : [];
-                },
-                bulkDelete() {
-                    window.dispatchEvent(new CustomEvent('confirm', {
-                        detail: {
-                            title: 'Bulk Delete Users',
-                            message: 'Are you sure you want to delete ' + this.selected.length + ' selected user(s)? This action cannot be undone.',
-                            confirmText: 'Delete',
-                            onConfirm: () => {
-                                const form = document.getElementById('bulk-delete-form');
-                                document.getElementById('bulk-ids').value = this.selected.join(',');
-                                form.submit();
-                            }
-                        }
-                    }));
-                }
-            }">
+        <div id="users-table-container" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
             <!-- Filter Bar -->
             <div class="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
                 <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-col sm:flex-row gap-4">
@@ -185,6 +264,116 @@
                     {{ $users->links() }}
                 </div>
             @endif
+            <!-- Create User Modal -->
+            <div x-show="showCreateModal" 
+                 class="fixed inset-0 z-50 overflow-y-auto" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 style="display: none;">
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 transition-opacity bg-slate-900/50 backdrop-blur-sm" @click="showCreateModal = false"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    
+                    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100 dark:border-slate-700"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                        
+                        <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-slate-200">Add New User</h3>
+                            <button @click="showCreateModal = false" class="text-gray-400 hover:text-gray-500 dark:hover:text-slate-300">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <form @submit.prevent="submitCreateForm()">
+                            <div class="p-6 space-y-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
+                                <template x-if="errors.general">
+                                    <div class="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm" x-text="errors.general"></div>
+                                </template>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Full Name <span class="text-red-500">*</span></label>
+                                        <input type="text" x-model="formData.name" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" placeholder="John Doe" required>
+                                        <span class="text-red-500 text-xs mt-1 block" x-show="errors.name" x-text="errors.name ? errors.name[0] : ''"></span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Email Address <span class="text-red-500">*</span></label>
+                                        <input type="email" x-model="formData.email" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" placeholder="john@example.com" required>
+                                        <span class="text-red-500 text-xs mt-1 block" x-show="errors.email" x-text="errors.email ? errors.email[0] : ''"></span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Phone Number</label>
+                                        <input type="text" x-model="formData.phone_number" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" placeholder="+1 234 567 8900">
+                                        <span class="text-red-500 text-xs mt-1 block" x-show="errors.phone_number" x-text="errors.phone_number ? errors.phone_number[0] : ''"></span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Department</label>
+                                        <input type="text" x-model="formData.department" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" placeholder="e.g. Human Resources">
+                                        <span class="text-red-500 text-xs mt-1 block" x-show="errors.department" x-text="errors.department ? errors.department[0] : ''"></span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Password <span class="text-red-500">*</span></label>
+                                        <input type="password" x-model="formData.password" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" required>
+                                        <span class="text-red-500 text-xs mt-1 block" x-show="errors.password" x-text="errors.password ? errors.password[0] : ''"></span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Confirm Password <span class="text-red-500">*</span></label>
+                                        <input type="password" x-model="formData.password_confirmation" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" required>
+                                        <span class="text-red-500 text-xs mt-1 block" x-show="errors.password_confirmation" x-text="errors.password_confirmation ? errors.password_confirmation[0] : ''"></span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-950 dark:text-slate-200 mb-3">Role Assignment</label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        @foreach($roles as $role)
+                                        <label class="inline-flex items-center p-3 border border-gray-200 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 hover:border-blue-300 transition-colors">
+                                            <input type="checkbox" x-model="formData.roles" value="{{ $role->name }}" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                            <span class="ml-3 text-sm font-medium text-gray-700 dark:text-slate-300">{{ $role->name }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                    <span class="text-red-500 text-xs mt-1 block" x-show="errors.roles" x-text="errors.roles ? errors.roles[0] : ''"></span>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-600 rounded-xl">
+                                    <label class="flex items-center cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox" x-model="formData.is_active" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <span class="block text-sm font-bold text-gray-900 dark:text-slate-200">Active Account</span>
+                                            <span class="block text-xs text-gray-500 dark:text-slate-400 mt-0.5">If disabled, the user will not be able to log in.</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="px-6 py-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-end gap-3 bg-gray-50 dark:bg-slate-800/50">
+                                <button type="button" @click="showCreateModal = false" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">Cancel</button>
+                                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors">
+                                    <i class="bi bi-check-lg mr-2"></i> Save User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

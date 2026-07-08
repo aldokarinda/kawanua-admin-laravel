@@ -40,28 +40,43 @@ class UserController extends Controller implements HasMiddleware
             $request->status
         )->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        $roles = Role::select('id', 'name')->get();
+
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        $roles = Role::all();
+        $roles = Role::select('id', 'name')->get();
         return view('admin.users.create', compact('roles'));
     }
 
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
-        $data['is_active'] = $request->has('is_active');
+        
+        // Handle standard request is_active checkbox vs AJAX JSON boolean
+        if ($request->isJson()) {
+            $data['is_active'] = (bool) $request->input('is_active');
+        } else {
+            $data['is_active'] = $request->has('is_active');
+        }
 
         $this->userService->createUser($data);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully.'
+            ]);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
     public function edit(User $user)
     {
-        $roles = Role::all();
+        $roles = Role::select('id', 'name')->get();
         $userRoles = $user->roles->pluck('name')->toArray();
         return view('admin.users.edit', compact('user', 'roles', 'userRoles'));
     }

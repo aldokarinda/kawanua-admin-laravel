@@ -80,10 +80,11 @@ class UserService
 
     public function bulkDeleteUsers(array $ids)
     {
-        $idsToDelete = collect($ids)->filter(function($id) {
-            $user = User::find($id);
-            return $user && $user->id !== 1 && !$user->hasRole('super-admin');
-        })->toArray();
+        $users = User::whereIn('id', $ids)->get();
+
+        $idsToDelete = $users->filter(function($user) {
+            return $user->id !== 1 && !$user->hasRole('super-admin');
+        })->pluck('id')->toArray();
 
         if (count($idsToDelete) > 0) {
             User::whereIn('id', $idsToDelete)->delete();

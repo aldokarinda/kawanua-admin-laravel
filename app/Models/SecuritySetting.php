@@ -27,24 +27,33 @@ class SecuritySetting extends Model
 
     /**
      * Get a security setting value by key.
+     *
+     * Stores a plain PHP array in cache (not an Eloquent Collection) to prevent
+     * unserialize() failures when the cache is read early in the middleware
+     * pipeline before Eloquent classes are autoloaded.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
+        // Cache stores a plain associative array: ['key' => ['value' => ..., 'type' => ...]]
         $settings = Cache::rememberForever('security_settings', function () {
-            return static::all()->keyBy('key');
+            return static::all()
+                ->keyBy('key')
+                ->map(fn ($s) => ['value' => $s->getRawOriginal('value'), 'type' => $s->type])
+                ->toArray();
         });
 
-        $setting = $settings->get($key);
-
-        if (!$setting) {
+        if (!isset($settings[$key])) {
             return $default;
         }
 
-        return match ($setting->type) {
-            'integer' => (int) $setting->value,
-            'boolean' => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
-            'json' => json_decode($setting->value, true),
-            default => $setting->value,
+        $value = $settings[$key]['value'];
+        $type  = $settings[$key]['type'];
+
+        return match ($type) {
+            'integer' => (int) $value,
+            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
+            'json'    => json_decode($value, true),
+            default   => $value,
         };
     }
 

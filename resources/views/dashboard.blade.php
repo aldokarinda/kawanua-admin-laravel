@@ -20,11 +20,10 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 dark:text-slate-400">Total Users</p>
-                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-slate-200">{{ \App\Models\User::count() }}</p>
+                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-slate-200">{{ $stats['total_users'] }}</p>
                         <p class="mt-1 text-xs text-emerald-600 dark:text-emerald-400">
                             <span class="inline-flex items-center gap-0.5">
-                                @php $activeCount = \App\Models\User::where('is_active', true)->count(); @endphp
-                                {{ $activeCount }} active
+                                {{ $stats['active_users'] }} active
                             </span>
                         </p>
                     </div>
@@ -39,7 +38,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 dark:text-slate-400">Total Roles</p>
-                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-slate-200">{{ Spatie\Permission\Models\Role::count() }}</p>
+                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-slate-200">{{ $stats['total_roles'] }}</p>
                         <p class="mt-1 text-xs text-amber-600 dark:text-amber-400">
                             Role-based access control
                         </p>
@@ -55,7 +54,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 dark:text-slate-400">Total Menus</p>
-                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-slate-200">{{ \App\Models\Menu::count() }}</p>
+                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-slate-200">{{ $stats['total_menus'] }}</p>
                         <p class="mt-1 text-xs text-cyan-600 dark:text-cyan-400">
                             Sidebar navigation items
                         </p>

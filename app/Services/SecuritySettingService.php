@@ -12,6 +12,18 @@ class SecuritySettingService
         return SecuritySetting::orderBy('key')->get();
     }
 
+    /**
+     * Get a single setting value by key (cached).
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        $settings = cache()->remember('security_settings_all', 300, function () {
+            return SecuritySetting::pluck('value', 'key')->toArray();
+        });
+
+        return $settings[$key] ?? $default;
+    }
+
     public function getGroupedSettings(): array
     {
         return [
@@ -90,6 +102,7 @@ class SecuritySettingService
         }
 
         $setting->save();
+        $this->clearSettingsCache();
         return $setting;
     }
 
@@ -101,6 +114,7 @@ class SecuritySettingService
                 $this->updateSetting($key, $value);
             }
         }
+        $this->clearSettingsCache();
     }
 
     /**
@@ -109,25 +123,25 @@ class SecuritySettingService
     public function validatePassword(string $password): array
     {
         $errors = [];
-        $minLength = SecuritySetting::get('password_min_length', 8);
+        $minLength = $this->get('password_min_length', 8);
 
         if (strlen($password) < $minLength) {
             $errors[] = "Password must be at least {$minLength} characters.";
         }
 
-        if (SecuritySetting::get('password_require_uppercase', true)) {
+        if ($this->get('password_require_uppercase', true)) {
             if (!preg_match('/[A-Z]/', $password)) {
                 $errors[] = 'Password must contain at least one uppercase letter.';
             }
         }
 
-        if (SecuritySetting::get('password_require_numeric', true)) {
+        if ($this->get('password_require_numeric', true)) {
             if (!preg_match('/[0-9]/', $password)) {
                 $errors[] = 'Password must contain at least one number.';
             }
         }
 
-        if (SecuritySetting::get('password_require_special', true)) {
+        if ($this->get('password_require_special', true)) {
             if (!preg_match('/[^A-Za-z0-9]/', $password)) {
                 $errors[] = 'Password must contain at least one special character.';
             }
@@ -139,12 +153,20 @@ class SecuritySettingService
     public function getPasswordPolicySummary(): string
     {
         $parts = [];
-        $parts[] = 'Min ' . SecuritySetting::get('password_min_length', 8) . ' chars';
+        $parts[] = 'Min ' . $this->get('password_min_length', 8) . ' chars';
 
-        if (SecuritySetting::get('password_require_uppercase', true)) $parts[] = 'uppercase';
-        if (SecuritySetting::get('password_require_numeric', true)) $parts[] = 'number';
-        if (SecuritySetting::get('password_require_special', true)) $parts[] = 'special char';
+        if ($this->get('password_require_uppercase', true)) $parts[] = 'uppercase';
+        if ($this->get('password_require_numeric', true)) $parts[] = 'number';
+        if ($this->get('password_require_special', true)) $parts[] = 'special char';
 
         return implode(', ', $parts);
+    }
+
+    /**
+     * Clear settings cache after modifications.
+     */
+    protected function clearSettingsCache(): void
+    {
+        cache()->forget('security_settings_all');
     }
 }
