@@ -352,7 +352,7 @@
             </nav>
 
             <div x-show="!sidebarCollapsed" class="px-4 py-2 text-center text-[10px] text-gray-400 dark:text-slate-500">
-                Copyright &copy; {{ date('Y') }} Aldo Karinda,<br>UNKLAB Business School
+                Copyright &copy; {{ date('Y') }} Aldo Karinda,<br><a href="https://feb.unklab.ac.id/" target="_blank" class="hover:underline hover:text-white transition-colors duration-200">UNKLAB Business School</a>
             </div>
 
             <!-- Bottom Profile Card -->

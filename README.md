@@ -117,4 +117,4 @@ After running the database seeder, log in with the default Super Admin account:
 
 This project is licensed under the Non-Commercial Software License Agreement. It is **free for personal, educational, and other non-commercial purposes**. Using this software for any commercial purpose requires a paid commercial license. See the [LICENSE](LICENSE) file for details.
 
-Copyright &copy; 2026 Aldo Karinda, UNKLAB Business School
+Copyright &copy; 2026 Aldo Karinda, [UNKLAB Business School](https://feb.unklab.ac.id/)
