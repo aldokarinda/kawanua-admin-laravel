@@ -31,26 +31,31 @@
         $theme = \App\Models\AppSetting::get('app_theme', 'indigo');
         $presets = [
             'indigo' => [
+                'base' => '#a5b4fc', 'dark' => '#6366f1', 'rgb' => '165, 180, 252',
                 '50' => '#f5f3ff', '100' => '#ede9fe', '200' => '#ddd6fe', '300' => '#c4b5fd',
                 '400' => '#a78bfa', '500' => '#818cf8', '600' => '#4f46e5', '700' => '#4338ca',
                 '800' => '#3730a3', '900' => '#01007f', '950' => '#01005a'
             ],
             'blue' => [
-                '50' => '#eff6ff', '100' => '#dbeafe', '200' => '#bfdbfe', '300' => '#93c5fd',
-                '400' => '#60a5fa', '500' => '#3b82f6', '600' => '#2563eb', '700' => '#1d4ed8',
-                '800' => '#1e40af', '900' => '#1e3a8a', '950' => '#172554'
+                'base' => '#22d3ee', 'dark' => '#06b6d4', 'rgb' => '34, 211, 238',
+                '50' => '#ecfeff', '100' => '#cffafe', '200' => '#a5f3fc', '300' => '#67e8f9',
+                '400' => '#22d3ee', '500' => '#06b6d4', '600' => '#0891b2', '700' => '#0e7490',
+                '800' => '#155e75', '900' => '#164e63', '950' => '#083344'
             ],
             'emerald' => [
+                'base' => '#34d399', 'dark' => '#059669', 'rgb' => '52, 211, 153',
                 '50' => '#ecfdf5', '100' => '#d1fae5', '200' => '#a7f3d0', '300' => '#6ee7b7',
                 '400' => '#34d399', '500' => '#10b981', '600' => '#059669', '700' => '#047857',
                 '800' => '#065f46', '900' => '#064e3b', '950' => '#022c22'
             ],
             'purple' => [
+                'base' => '#c084fc', 'dark' => '#9333ea', 'rgb' => '192, 132, 252',
                 '50' => '#faf5ff', '100' => '#f3e8ff', '200' => '#e9d5ff', '300' => '#d8b4fe',
                 '400' => '#c084fc', '500' => '#a855f7', '600' => '#9333ea', '700' => '#7e22ce',
                 '800' => '#6b21a8', '900' => '#581c87', '950' => '#3b0764'
             ],
             'rose' => [
+                'base' => '#fb7185', 'dark' => '#e11d48', 'rgb' => '251, 113, 133',
                 '50' => '#fff1f2', '100' => '#ffe4e6', '200' => '#fecdd3', '300' => '#fda4af',
                 '400' => '#fb7185', '500' => '#f43f5e', '600' => '#e11d48', '700' => '#be123c',
                 '800' => '#9f1239', '900' => '#881337', '950' => '#4c0519'
@@ -61,22 +66,30 @@
 
     <style>
         :root {
+            --sidebar-active-accent-color: {{ $colors['base'] }};
+            --sidebar-active-accent-dark: {{ $colors['dark'] }};
+            --sidebar-active-accent-rgb: {{ $colors['rgb'] }};
+
             @foreach($colors as $shade => $hex)
-                --color-primary-{{ $shade }}: {{ $hex }};
+                @if(is_numeric($shade))
+                    --color-primary-{{ $shade }}: {{ $hex }};
+                @endif
             @endforeach
         }
         @foreach($colors as $shade => $hex)
-            .bg-primary-{{ $shade }} { background-color: {{ $hex }} !important; }
-            .text-primary-{{ $shade }} { color: {{ $hex }} !important; }
-            .border-primary-{{ $shade }} { border-color: {{ $hex }} !important; }
-            .ring-primary-{{ $shade }} { --tw-ring-color: {{ $hex }} !important; }
-            .focus\:border-primary-{{ $shade }}:focus { border-color: {{ $hex }} !important; }
-            .focus\:ring-primary-{{ $shade }}:focus { --tw-ring-color: {{ $hex }} !important; }
-            .hover\:bg-primary-{{ $shade }}:hover { background-color: {{ $hex }} !important; }
-            .hover\:text-primary-{{ $shade }}:hover { color: {{ $hex }} !important; }
-            .peer-checked\:bg-primary-{{ $shade }}:checked ~ div { background-color: {{ $hex }} !important; }
-            .peer-checked\:bg-primary-600:checked ~ div { background-color: {{ $colors['600'] }} !important; }
+            @if(is_numeric($shade))
+                .bg-primary-{{ $shade }} { background-color: {{ $hex }} !important; }
+                .text-primary-{{ $shade }} { color: {{ $hex }} !important; }
+                .border-primary-{{ $shade }} { border-color: {{ $hex }} !important; }
+                .ring-primary-{{ $shade }} { --tw-ring-color: {{ $hex }} !important; }
+                .focus\:border-primary-{{ $shade }}:focus { border-color: {{ $hex }} !important; }
+                .focus\:ring-primary-{{ $shade }}:focus { --tw-ring-color: {{ $hex }} !important; }
+                .hover\:bg-primary-{{ $shade }}:hover { background-color: {{ $hex }} !important; }
+                .hover\:text-primary-{{ $shade }}:hover { color: {{ $hex }} !important; }
+                .peer-checked\:bg-primary-{{ $shade }}:checked ~ div { background-color: {{ $hex }} !important; }
+            @endif
         @endforeach
+        .peer-checked\:bg-primary-600:checked ~ div { background-color: {{ $colors['600'] }} !important; }
     </style>
 
     {{-- Bootstrap Icons — loaded async --}}
