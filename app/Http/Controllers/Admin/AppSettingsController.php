@@ -6,9 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Services\AppSettingService;
 use App\Services\AuditLogService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AppSettingsController extends Controller
+class AppSettingsController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:setting.view', only: ['index', 'update']),
+        ];
+    }
+
     protected AppSettingService $appSettingService;
     protected AuditLogService $auditLogService;
 

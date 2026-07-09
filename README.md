@@ -1,6 +1,12 @@
-# Kawanua Admin Laravel
+# Kawanua Admin Panel
 
-**Kawanua Admin Laravel** is a premium, modern, and lightweight admin dashboard template built on top of Laravel 13, Tailwind CSS, and Alpine.js. It is offering a cleaner SaaS-like aesthetic, a dynamic menu builder, a robust Role-Based Access Control (RBAC) system, and a comprehensive Security Suite right out of the box.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Laravel Version](https://img.shields.io/badge/Laravel-13.x-red.svg)](https://laravel.com)
+[![PHP Version](https://img.shields.io/badge/PHP-8.3%2B-blue.svg)](https://php.net)
+
+**Kawanua Admin Panel** is a premium, modern, and lightweight administrative dashboard template built on Laravel 13, Tailwind CSS, and Alpine.js. Out of the box, it delivers a clean SaaS-like interface, a dynamic menu builder, an advanced Role-Based Access Control (RBAC) system, and a comprehensive security suite.
+
+---
 
 ## 📸 Screenshots
 
@@ -18,29 +24,35 @@
 
 ### 5. Master Data
 ![Categories](public/screenshots/categories.png)
+
+---
+
 ## ✨ Key Features
 
-- **Built with Tailwind CSS & Alpine.js**: Lightning fast, zero jQuery, and no bulky CSS frameworks.
-- **Dynamic Menu Builder**: Easily create, manage, and arrange your sidebar menus directly from the database with a visual tree hierarchy builder.
-- **Advanced RBAC System**: Comprehensive User, Role, and Permission management using Laravel's native features and Spatie Permission.
-- **Premium Split-Pane Forms**: Enterprise-grade UI/UX for form layouts, separating context from inputs for better readability.
-- **Ultimate DataTables**: Clean, beautiful tables with bulk actions, search, filters, and premium icon actions.
-- **Visual Icon Picker**: Pick Bootstrap Icons seamlessly when creating menus instead of pasting SVG codes.
-- **Dark Mode Support**: Native dark mode implementation across the entire dashboard.
+- **Tailwind CSS & Alpine.js**: Fast, lightweight, zero jQuery dependencies, and clean native styling.
+- **Dynamic Menu Builder**: Easily create, manage, and order your hierarchical sidebar menus directly from the database using a visual tree interface.
+- **Advanced RBAC System**: Full User, Role, and Permission management utilizing Spatie Laravel Permission with an active role cloning utility.
+- **Premium Layouts**: Responsive desktop and mobile drawer layouts featuring smooth sidebar width collapses, hover states, and active menu glow bar indicators.
+- **Split-Pane Forms**: Contextual input forms designed for high readability and structured data entry.
+- **Ultimate DataTables**: Elegant, searchable tables supporting bulk actions, quick filters, and context menus.
+- **Visual Icon Picker**: Choose from the built-in Bootstrap Icons list when creating menus instead of dealing with manual markup.
+- **Modern Load Indicators**: Fitted with non-blocking `NProgress` loading bars for smooth page transitions.
 
-### 🛡️ Enterprise Security Suite (New)
-- **Security Dashboard**: High-level statistics on login activity, active IP restrictions, and quick system status.
-- **Two-Factor Authentication (2FA)**: Pure-PHP RFC 6238 TOTP implementation supporting visual setup QR codes, recovery codes, and status audits.
-- **IP Restrictions**: Dynamic whitelisting and blacklisting of specific IP addresses with customizable expiration times.
-- **Session Management**: Monitor active user sessions stored in database driver, view client agent info, and force terminate/logout individual or all active sessions.
-- **Activity Log & Audit Trail**: Granular database audit logs showing exact modifications (`getChanges()`), with modules, actions, IP addresses, and user agents.
-- **Security Settings**: Global panel controls including login rate limiting policies, account lockouts, session session duration thresholds, and 2FA enforcement.
+### 🛡️ Enterprise Security Suite
+- **Security Dashboard**: High-level statistics on login activity, active IP restrictions, and quick system status reports.
+- **Two-Factor Authentication (2FA)**: Pure-PHP RFC 6238 TOTP implementation supporting visual QR code setup, recovery codes, and administrative bypass/reset actions.
+- **Active Session Management**: Monitor active user sessions, view client agent details, and force terminate/logout individual or all active user sessions remotely.
+- **Consolidated Activity Log**: Granular database audit trails powered by Spatie showing exact modifications (`getChanges()`), modules, actions, IP addresses, and user agents.
+- **IP Restrictions**: Dynamic whitelisting and blacklisting of specific IP addresses or CIDR ranges with custom expiration times.
+- **Security Settings**: Global rules for configuring password policy strength (mix cases, numeric, symbols), failed login lockouts, and inactive auto-logout timers.
 
-### 🔌 API Authentication Layer (New)
+### 🔌 API Authentication Layer
 - **Refresh Token Rotation (RTR)**: Highly secure token system powered by Laravel Sanctum.
 - **Access Token TTL**: Short-lived access tokens valid for 15 minutes.
 - **Refresh Token TTL**: Rotation token valid for 7 days. Single-use rotation prevents token replay attacks.
 - **Breach Containment**: Re-use of any previously rotated refresh token triggers automatic compromise containment, revoking ALL active tokens for that user immediately.
+
+---
 
 ## 🚀 Getting Started
 
@@ -61,27 +73,14 @@ Follow these instructions to get a copy of the project up and running on your lo
    cd kawanua-admin-laravel
    ```
 
-2. **Install PHP dependencies:**
+2. **Setup and compile front-end assets:**
+   Run the quick setup script to install dependencies, generate key, and build assets:
    ```bash
-   composer install
+   composer run setup
    ```
+   *Alternatively, run `composer install` and `npm install && npm run build` manually.*
 
-3. **Install NPM dependencies:**
-   ```bash
-   npm install
-   ```
-
-4. **Copy the environment file:**
-   ```bash
-   cp .env.example .env
-   ```
-
-5. **Generate the application key:**
-   ```bash
-   php artisan key:generate
-   ```
-
-6. **Configure your database in `.env`:**
+3. **Configure your database in `.env`:**
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -91,40 +90,31 @@ Follow these instructions to get a copy of the project up and running on your lo
    DB_PASSWORD=
    ```
 
-7. **Run database migrations and seeders:**
-   This will install the required tables and seed the Super Admin user, default roles, and menus.
+4. **Run database migrations and seeders:**
+   Installs the required tables and seeds the default roles, dynamic English menus, and default configurations:
    ```bash
    php artisan migrate --seed
    ```
 
-8. **Compile front-end assets:**
-   ```bash
-   npm run build
-   # Or for development: npm run dev
-   ```
-
-9. **Serve the application:**
+5. **Serve the application:**
    ```bash
    php artisan serve
+   # In another terminal run: npm run dev
    ```
+
+---
 
 ## 🔑 Default Credentials
 
-After running the seeder, you can log in with the default Super Admin account:
+After running the database seeder, log in with the default Super Admin account:
 
 - **Email:** `admin@admin.com`
 - **Password:** `password`
 
-## 🛠️ Built With
-
-- [Laravel 13](https://laravel.com/) - The PHP Framework for Web Artisans
-- [Laravel Sanctum](https://laravel.com/docs/11.x/sanctum) - Lightweight API Authentication
-- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
-- [Alpine.js](https://alpinejs.dev/) - A rugged, minimal framework for composing JavaScript behavior in your markup
-- [Bootstrap Icons](https://icons.getbootstrap.com/) - Free, high quality, open source icon library
+---
 
 ## 📄 License
 
-This project is licensed under the Non-Commercial Software License Agreement. It is **free for personal, educational, and other non-commercial purposes**. Using this software for any commercial purpose requires a paid commercial license. See the [LICENSE](LICENSE) file for details.
+This project is open-source and licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute this template for both personal and commercial projects.
 
 Copyright &copy; 2026 Aldo Karinda, UNKLAB Business School
