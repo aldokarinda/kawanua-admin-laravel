@@ -73,7 +73,7 @@ class MenuSeeder extends Seeder
         $children = [
             [
                 'slug' => 'user-management',
-                'name' => 'User Management',
+                'name' => 'Users',
                 'icon' => 'bi bi-people-fill text-emerald-400',
                 'route_name' => 'admin.users.index',
                 'permission_name' => 'user.view',

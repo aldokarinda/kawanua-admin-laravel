@@ -22,6 +22,7 @@ return new class extends Migration
         DB::table('menus')->where('slug', 'regions')->update(['name' => 'Regions']);
         DB::table('menus')->where('slug', 'visitor-stats')->update(['name' => 'Visitor Statistics']);
         DB::table('menus')->where('slug', 'transactions')->update(['name' => 'Transaction Reports']);
+        DB::table('menus')->where('slug', 'user-management')->update(['name' => 'Users']);
         
         // 3. Update App Settings menu details to point to the new route
         DB::table('menus')->where('slug', 'app-settings')->update([
@@ -48,6 +49,7 @@ return new class extends Migration
         DB::table('menus')->where('slug', 'regions')->update(['name' => 'Data Wilayah']);
         DB::table('menus')->where('slug', 'visitor-stats')->update(['name' => 'Statistik Pengunjung']);
         DB::table('menus')->where('slug', 'transactions')->update(['name' => 'Laporan Transaksi']);
+        DB::table('menus')->where('slug', 'user-management')->update(['name' => 'User Management']);
 
         // Restore App Settings menu
         DB::table('menus')->where('slug', 'app-settings')->update([
