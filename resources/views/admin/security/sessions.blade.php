@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 <x-admin-layout>
     <div class="py-6 px-4 sm:px-6 lg:px-8">
         <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard')], ['label' => 'Security Center', 'url' => route('admin.security.index')], ['label' => 'Active Sessions']]" />

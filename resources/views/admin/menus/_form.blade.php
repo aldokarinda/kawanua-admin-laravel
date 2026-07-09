@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 @php
     $fieldClass = 'w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm';
     $colorOptions = [

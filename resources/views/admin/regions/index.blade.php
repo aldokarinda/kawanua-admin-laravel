@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 <x-admin-layout>
     <div class="space-y-6">
         <x-breadcrumb :items="[['label' => 'Master Data', 'url' => '#'], ['label' => 'Regions', 'url' => route('admin.regions.index')]]" />

@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 <x-admin-layout>
     <div class="space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

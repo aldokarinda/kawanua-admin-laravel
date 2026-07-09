@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />

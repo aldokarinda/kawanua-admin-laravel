@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 @props(['align' => 'right', 'width' => '48', 'contentClasses' => 'py-1 bg-white'])
 
 @php

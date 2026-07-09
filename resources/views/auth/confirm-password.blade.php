@@ -1,3 +1,8 @@
+{{--
+ * Copyright (c) 2026 Aldo Karinda, UNKLAB Business School.
+ * All rights reserved.
+ * Licensed under the Non-Commercial Software License Agreement.
+--}}
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
