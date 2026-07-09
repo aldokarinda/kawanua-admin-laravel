@@ -5,19 +5,19 @@
 ## 📸 Screenshots
 
 ### 1. Dashboard
-![Dashboard](/screenshots/dashboard.png)
+![Dashboard](public/screenshots/dashboard.png)
 
 ### 2. User Management
-![User Management](/screenshots/users.png)
+![User Management](public/screenshots/users.png)
 
 ### 3. Role Management
-![Role Management](/screenshots/roles.png)
+![Role Management](public/screenshots/roles.png)
 
 ### 4. Security Dashboard
-![Security Dashboard](/screenshots/security.png)
+![Security Dashboard](public/screenshots/security.png)
 
 ### 5. Master Data
-![Categories](/screenshots/categories.png)
+![Categories](public/screenshots/categories.png)
 ## ✨ Key Features
 
 - **Built with Tailwind CSS & Alpine.js**: Lightning fast, zero jQuery, and no bulky CSS frameworks.
