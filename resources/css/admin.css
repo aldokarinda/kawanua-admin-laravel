@@ -184,7 +184,7 @@ main {
 
 .sidebar-item.active .sidebar-menu-icon,
 .sidebar-item.active .sidebar-menu-icon i {
-    color: var(--sidebar-active-accent-color) !important;
+    color: var(--sidebar-active-parent-text) !important;
     transform: scale(1.05);
 }
 
@@ -441,10 +441,10 @@ main {
 
 /* Active state — leaf item (actual page link) */
 .sidebar-item.active {
-    background: rgba(var(--sidebar-active-accent-rgb), 0.12);
-    color: var(--sidebar-active-accent-color);
-    border-color: rgba(var(--sidebar-active-accent-rgb), 0.25);
-    box-shadow: 0 4px 15px rgba(var(--sidebar-active-accent-rgb), 0.1);
+    background: var(--sidebar-active-parent-bg);
+    color: var(--sidebar-active-parent-text);
+    border-color: var(--sidebar-active-parent-bg);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     font-weight: 700;
 }
 

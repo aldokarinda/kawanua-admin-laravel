@@ -80,10 +80,11 @@
                                 <input type="hidden" name="settings[app_theme]" id="app_theme_input" value="{{ $appTheme }}">
                                 @foreach([
                                     'indigo' => 'bg-indigo-600 ring-indigo-500',
-                                    'blue' => 'bg-blue-600 ring-blue-500',
+                                    'blue' => 'bg-cyan-400 ring-cyan-300',
                                     'emerald' => 'bg-emerald-600 ring-emerald-500',
                                     'purple' => 'bg-purple-600 ring-purple-500',
-                                    'rose' => 'bg-rose-600 ring-rose-500'
+                                    'rose' => 'bg-rose-600 ring-rose-500',
+                                    'white' => 'bg-white border border-gray-300 ring-slate-400'
                                 ] as $themeKey => $classes)
                                     <button type="button" onclick="selectTheme('{{ $themeKey }}')" class="w-8 h-8 rounded-full {{ $classes }} transition-all focus:outline-none theme-btn-selector @if($appTheme === $themeKey) ring-4 ring-offset-2 dark:ring-offset-slate-900 @endif" data-theme="{{ $themeKey }}"></button>
                                 @endforeach

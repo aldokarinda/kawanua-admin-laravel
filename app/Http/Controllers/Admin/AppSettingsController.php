@@ -43,7 +43,7 @@ class AppSettingsController extends Controller implements HasMiddleware
             'settings' => 'required|array',
             'settings.app_name' => 'required|string|max:255',
             'settings.app_description' => 'nullable|string|max:255',
-            'settings.app_theme' => 'required|string|in:indigo,blue,emerald,purple,rose',
+            'settings.app_theme' => 'required|string|in:indigo,blue,emerald,purple,rose,white',
             'app_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
