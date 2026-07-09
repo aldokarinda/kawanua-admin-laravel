@@ -18,9 +18,25 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
+
+        <!-- Avatar Upload with Preview -->
+        <div>
+            <x-input-label for="avatar" :value="__('Avatar Image')" />
+            <div class="flex items-center gap-4 mt-2">
+                <div class="w-16 h-16 rounded-full border border-gray-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    @if($user->avatar)
+                        <img src="{{ asset('storage/' . $user->avatar) }}" class="w-full h-full object-cover">
+                    @else
+                        <img src="{{ asset('images/logo.webp') }}" class="w-full h-full object-cover">
+                    @endif
+                </div>
+                <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-gray-500 dark:text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900/30 dark:file:text-primary-400">
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -50,6 +66,18 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="phone_number" :value="__('Phone Number')" />
+            <x-text-input id="phone_number" name="phone_number" type="text" class="mt-1 block w-full" :value="old('phone_number', $user->phone_number)" autocomplete="tel" />
+            <x-input-error class="mt-2" :messages="$errors->get('phone_number')" />
+        </div>
+
+        <div>
+            <x-input-label for="department" :value="__('Department')" />
+            <x-text-input id="department" name="department" type="text" class="mt-1 block w-full" :value="old('department', $user->department)" />
+            <x-input-error class="mt-2" :messages="$errors->get('department')" />
         </div>
 
         <div class="flex items-center gap-4">

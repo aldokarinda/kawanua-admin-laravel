@@ -82,4 +82,7 @@ Route::middleware(['auth', 'ip.restrict'])->prefix('admin')->name('admin.')->gro
         Route::get('visitors', [\App\Http\Controllers\Admin\ReportController::class, 'visitors'])->name('visitors');
         Route::get('transactions', [\App\Http\Controllers\Admin\ReportController::class, 'transactions'])->name('transactions');
     });
+
+    // Database Backup Exporter
+    Route::get('backup/download', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backup.download');
 });

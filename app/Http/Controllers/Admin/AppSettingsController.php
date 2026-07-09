@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
+use App\Helpers\ImageHelper;
+
 class AppSettingsController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
@@ -39,26 +41,42 @@ class AppSettingsController extends Controller implements HasMiddleware
     {
         $validated = $request->validate([
             'settings' => 'required|array',
-            'settings.*' => 'nullable|string|max:255',
+            'settings.app_name' => 'required|string|max:255',
+            'settings.app_description' => 'nullable|string|max:255',
+            'settings.app_theme' => 'required|string|in:indigo,blue,emerald,purple,rose',
+            'app_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        $settingsData = $validated['settings'];
         $oldSettings = [];
-        foreach ($validated['settings'] as $key => $val) {
+        foreach ($settingsData as $key => $val) {
             $oldSettings[$key] = $this->appSettingService->get($key);
         }
+        $oldSettings['app_logo'] = $this->appSettingService->get('app_logo');
 
-        $this->appSettingService->bulkUpdate($validated['settings']);
+        // Handle file upload
+        if ($request->hasFile('app_logo')) {
+            $logoPath = ImageHelper::resizeAndCropToSquare($request->file('app_logo'), 'logos', 128);
+            if ($logoPath) {
+                $settingsData['app_logo'] = $logoPath;
+            }
+        }
+
+        // Bulk update
+        $this->appSettingService->bulkUpdate($settingsData);
 
         // Log the audit event
-        $this->auditLogService->log(
-            auth()->id(),
-            'Updated',
-            'App Settings',
-            [
+        \App\Models\AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Updated',
+            'module' => 'App Settings',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'details' => [
                 'old' => $oldSettings,
-                'new' => $validated['settings'],
+                'new' => $this->appSettingService->getAllSettings()->pluck('value', 'key')->toArray(),
             ]
-        );
+        ]);
 
         return redirect()
             ->route('admin.app_settings.index')

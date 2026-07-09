@@ -38,6 +38,22 @@ return new class extends Migration
                 'description' => 'A brief description of the application.',
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'key' => 'app_logo',
+                'value' => null,
+                'type' => 'string',
+                'description' => 'Application brand logo image.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'app_theme',
+                'value' => 'indigo',
+                'type' => 'string',
+                'description' => 'Primary sidebar theme color preset.',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
 

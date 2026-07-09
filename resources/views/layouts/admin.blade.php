@@ -27,6 +27,58 @@
 
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 
+    @php
+        $theme = \App\Models\AppSetting::get('app_theme', 'indigo');
+        $presets = [
+            'indigo' => [
+                '50' => '#f5f3ff', '100' => '#ede9fe', '200' => '#ddd6fe', '300' => '#c4b5fd',
+                '400' => '#a78bfa', '500' => '#818cf8', '600' => '#4f46e5', '700' => '#4338ca',
+                '800' => '#3730a3', '900' => '#01007f', '950' => '#01005a'
+            ],
+            'blue' => [
+                '50' => '#eff6ff', '100' => '#dbeafe', '200' => '#bfdbfe', '300' => '#93c5fd',
+                '400' => '#60a5fa', '500' => '#3b82f6', '600' => '#2563eb', '700' => '#1d4ed8',
+                '800' => '#1e40af', '900' => '#1e3a8a', '950' => '#172554'
+            ],
+            'emerald' => [
+                '50' => '#ecfdf5', '100' => '#d1fae5', '200' => '#a7f3d0', '300' => '#6ee7b7',
+                '400' => '#34d399', '500' => '#10b981', '600' => '#059669', '700' => '#047857',
+                '800' => '#065f46', '900' => '#064e3b', '950' => '#022c22'
+            ],
+            'purple' => [
+                '50' => '#faf5ff', '100' => '#f3e8ff', '200' => '#e9d5ff', '300' => '#d8b4fe',
+                '400' => '#c084fc', '500' => '#a855f7', '600' => '#9333ea', '700' => '#7e22ce',
+                '800' => '#6b21a8', '900' => '#581c87', '950' => '#3b0764'
+            ],
+            'rose' => [
+                '50' => '#fff1f2', '100' => '#ffe4e6', '200' => '#fecdd3', '300' => '#fda4af',
+                '400' => '#fb7185', '500' => '#f43f5e', '600' => '#e11d48', '700' => '#be123c',
+                '800' => '#9f1239', '900' => '#881337', '950' => '#4c0519'
+            ]
+        ];
+        $colors = $presets[$theme] ?? $presets['indigo'];
+    @endphp
+
+    <style>
+        :root {
+            @foreach($colors as $shade => $hex)
+                --color-primary-{{ $shade }}: {{ $hex }};
+            @endforeach
+        }
+        @foreach($colors as $shade => $hex)
+            .bg-primary-{{ $shade }} { background-color: {{ $hex }} !important; }
+            .text-primary-{{ $shade }} { color: {{ $hex }} !important; }
+            .border-primary-{{ $shade }} { border-color: {{ $hex }} !important; }
+            .ring-primary-{{ $shade }} { --tw-ring-color: {{ $hex }} !important; }
+            .focus\:border-primary-{{ $shade }}:focus { border-color: {{ $hex }} !important; }
+            .focus\:ring-primary-{{ $shade }}:focus { --tw-ring-color: {{ $hex }} !important; }
+            .hover\:bg-primary-{{ $shade }}:hover { background-color: {{ $hex }} !important; }
+            .hover\:text-primary-{{ $shade }}:hover { color: {{ $hex }} !important; }
+            .peer-checked\:bg-primary-{{ $shade }}:checked ~ div { background-color: {{ $hex }} !important; }
+            .peer-checked\:bg-primary-600:checked ~ div { background-color: {{ $colors['600'] }} !important; }
+        @endforeach
+    </style>
+
     {{-- Bootstrap Icons — loaded async --}}
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
           as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -159,8 +211,8 @@
                    x-transition:enter-start="opacity-0 translate-x-2"
                    x-transition:enter-end="opacity-100 translate-x-0">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                         style="background: linear-gradient(135deg, #818cf8, #4f46e5); box-shadow: 0 0 14px rgba(129,140,248,0.5);">
-                        <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="w-5 h-5 object-cover rounded">
+                         style="background: linear-gradient(135deg, var(--color-primary-400, #818cf8), var(--color-primary-600, #4f46e5)); box-shadow: 0 0 14px rgba(129,140,248,0.5);">
+                        <img src="{{ \App\Models\AppSetting::get('app_logo') ? asset('storage/' . \App\Models\AppSetting::get('app_logo')) : asset('images/logo.webp') }}" alt="Logo" class="w-5 h-5 object-cover rounded">
                     </div>
                     <span class="sidebar-app-name text-base whitespace-nowrap truncate">{{ config('app.name') }}</span>
                 </a>
@@ -168,8 +220,8 @@
                 <!-- Collapsed: just logo icon -->
                 <a href="{{ route('dashboard') }}" x-show="sidebarCollapsed" x-cloak
                    class="w-9 h-9 rounded-lg flex items-center justify-center"
-                   style="background: linear-gradient(135deg, #818cf8, #4f46e5); box-shadow: 0 0 14px rgba(129,140,248,0.4);">
-                    <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="w-5 h-5 object-cover rounded">
+                   style="background: linear-gradient(135deg, var(--color-primary-400, #818cf8), var(--color-primary-600, #4f46e5)); box-shadow: 0 0 14px rgba(129,140,248,0.4);">
+                    <img src="{{ \App\Models\AppSetting::get('app_logo') ? asset('storage/' . \App\Models\AppSetting::get('app_logo')) : asset('images/logo.webp') }}" alt="Logo" class="w-5 h-5 object-cover rounded">
                 </a>
 
 
@@ -343,7 +395,7 @@
                     <!-- Profile - Text hidden on mobile -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 focus:outline-none p-1 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                            <img class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-600 object-cover" src="{{ asset('images/logo.webp') }}" alt="User">
+                            <img class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-600 object-cover" src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/logo.webp') }}" alt="User">
                             <span class="hidden md:block text-sm font-medium text-gray-700 dark:text-slate-300">{{ auth()->user()->name }}</span>
                             <svg class="hidden md:block w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
