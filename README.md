@@ -1,6 +1,6 @@
 # Kawanua Admin Panel
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Non-Commercial](https://img.shields.io/badge/License-Non--Commercial-red.svg)](LICENSE)
 [![Laravel Version](https://img.shields.io/badge/Laravel-13.x-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.3%2B-blue.svg)](https://php.net)
 
@@ -42,7 +42,7 @@
 - **Security Dashboard**: High-level statistics on login activity, active IP restrictions, and quick system status reports.
 - **Two-Factor Authentication (2FA)**: Pure-PHP RFC 6238 TOTP implementation supporting visual QR code setup, recovery codes, and administrative bypass/reset actions.
 - **Active Session Management**: Monitor active user sessions, view client agent details, and force terminate/logout individual or all active user sessions remotely.
-- **Consolidated Activity Log**: Granular database audit trails powered by Spatie showing exact modifications (`getChanges()`), modules, actions, IP addresses, and user agents.
+- **Consolidated Activity Log**: Granular database audit logs showing exact modifications (`getChanges()`), modules, actions, IP addresses, and user agents.
 - **IP Restrictions**: Dynamic whitelisting and blacklisting of specific IP addresses or CIDR ranges with custom expiration times.
 - **Security Settings**: Global rules for configuring password policy strength (mix cases, numeric, symbols), failed login lockouts, and inactive auto-logout timers.
 
@@ -115,6 +115,6 @@ After running the database seeder, log in with the default Super Admin account:
 
 ## 📄 License
 
-This project is open-source and licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute this template for both personal and commercial projects.
+This project is licensed under the Non-Commercial Software License Agreement. It is **free for personal, educational, and other non-commercial purposes**. Using this software for any commercial purpose requires a paid commercial license. See the [LICENSE](LICENSE) file for details.
 
 Copyright &copy; 2026 Aldo Karinda, UNKLAB Business School
