@@ -80,10 +80,7 @@ main {
 
 /* Sidebar base — with subtle noise texture overlay */
 .sidebar-premium {
-    background:
-        url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M5 0h1L0 5V4zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(165deg, var(--sidebar-bg-from) 0%, var(--sidebar-bg-to) 100%);
-    position: relative;
+    background: linear-gradient(165deg, var(--sidebar-bg-from) 0%, var(--sidebar-bg-to) 100%);
     overflow: hidden;
 }
 
@@ -532,22 +529,41 @@ main {
     box-shadow: 0 0 6px rgba(165, 180, 252, 0.7);
 }
 
-/* Active state */
+/* Active state — matches top-level .sidebar-item.active */
 .sidebar-subitem.active {
-    color: #c7d2fe;
-    font-weight: 600;
-    background: rgba(165, 180, 252, 0.1);
+    background: #ffffff;
+    color: #1e3a8a;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     transform: translateX(4px);
 }
 
 .sidebar-subitem.active::before {
-    background: #818cf8;
-    box-shadow: 0 0 8px rgba(129, 140, 248, 0.8);
+    background: #1e3a8a;
+    box-shadow: none;
     opacity: 1;
+}
+
+/* Glow bar on active subitem */
+.sidebar-subitem.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 55%;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, #818cf8 0%, #4f46e5 100%);
+    box-shadow: 0 0 10px rgba(129, 140, 248, 0.6),
+                0 0 4px rgba(79, 70, 229, 0.4);
+    animation: glowBarSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .sidebar-subitem.active:hover {
     transform: translateX(6px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
 /* Staggered cascade delays for submenu items */
@@ -739,4 +755,95 @@ main {
 }
 .sidebar-item:hover .shortcut-hint {
     opacity: 1;
+}
+
+/* ===================================================
+   Responsive Mobile Utilities (Phase 3)
+   =================================================== */
+
+/* Responsive table hide/show */
+@media (max-width: 767px) {
+    .table-responsive-desktop {
+        display: none !important;
+    }
+    .cards-responsive-mobile {
+        display: block !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .cards-responsive-mobile {
+        display: none !important;
+    }
+}
+
+/* Touch-friendly tap targets for mobile */
+@media (max-width: 1023px) {
+    .sidebar-item {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Increase button sizes on mobile */
+    .btn-mobile-friendly {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Responsive typography */
+@media (max-width: 639px) {
+    .text-responsive-xl {
+        font-size: 1.25rem /* 20px */;
+        line-height: 1.75rem /* 28px */;
+    }
+    .text-responsive-2xl {
+        font-size: 1.5rem /* 24px */;
+        line-height: 2rem /* 32px */;
+    }
+}
+
+/* Mobile-first card layouts (Tailwind @apply replacement) */
+.card-stack-mobile {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .card-stack-mobile {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .card-stack-mobile {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Reduce animations on mobile for better performance */
+@media (max-width: 768px) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    /* Simplify sidebar transitions */
+    .sidebar-transition {
+        transition: transform 0.15s ease-out !important;
+    }
+}
+
+/* Optimize scrolling performance */
+@media (max-width: 1024px) {
+    .optimize-scroll {
+        -webkit-overflow-scrolling: touch;
+        will-change: scroll-position;
+    }
 }

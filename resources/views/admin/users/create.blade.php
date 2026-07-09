@@ -3,9 +3,9 @@
 
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('dashboard')],
-            ['label' => 'User Management', 'url' => route('admin.users.index')],
-            ['label' => 'Create User']
+            ['label' => 'Administration', 'url' => '#'],
+            ['label' => 'Users', 'url' => route('admin.users.index')],
+            ['label' => 'Add User']
         ]" />
 
         <div class="mb-6 flex items-center justify-between">

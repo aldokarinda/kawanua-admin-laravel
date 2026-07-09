@@ -20,7 +20,7 @@
         </div>
 
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="table-responsive-desktop overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
@@ -76,6 +76,59 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div class="cards-responsive-mobile p-4">
+                @forelse($sessions as $session)
+                    @php
+                        $sessionUser = $session->user_id ? \App\Models\User::find($session->user_id) : null;
+                    @endphp
+                    <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 mb-3 shadow-sm">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center flex-1 min-w-0">
+                                <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400 flex items-center justify-center font-semibold text-sm uppercase flex-shrink-0">
+                                    {{ $sessionUser ? substr($sessionUser->name, 0, 1) : 'G' }}
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <h3 class="font-semibold text-slate-900 dark:text-slate-200 truncate">{{ $sessionUser ? $sessionUser->name : 'Guest' }}</h3>
+                                    <p class="text-xs text-gray-500 dark:text-slate-400 truncate">{{ $sessionUser ? $sessionUser->email : 'Anonymous' }}</p>
+                                </div>
+                            </div>
+                            <span class="ml-2 flex-shrink-0 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span>Active
+                            </span>
+                        </div>
+                        <div class="mt-2 space-y-1.5 text-sm">
+                            <div class="flex items-center gap-2 text-gray-600 dark:text-slate-300">
+                                <i class="bi bi-globe text-xs text-gray-400 w-4"></i>
+                                <span class="font-mono text-xs">{{ $session->ip_address }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400">
+                                <i class="bi bi-display text-xs text-gray-400 w-4"></i>
+                                <span class="text-xs truncate" title="{{ $session->user_agent }}">{{ \Illuminate\Support\Str::limit($session->user_agent, 50) }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400">
+                                <i class="bi bi-clock text-xs text-gray-400 w-4"></i>
+                                <span class="text-xs">{{ \Carbon\Carbon::createFromTimestamp($session->last_activity)->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <form action="{{ route('admin.security.sessions.destroy', $session->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                                    <i class="bi bi-x-lg text-xs"></i> Terminate
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-12 text-gray-500 dark:text-slate-400">
+                        <i class="bi bi-inbox text-4xl block mb-3 text-gray-300 dark:text-slate-600"></i>
+                        <p class="text-sm">No active sessions found.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>

@@ -39,6 +39,12 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         User::observe(UserObserver::class);
         Role::observe(RoleObserver::class);
+        
+        // Dynamically override APP_NAME from database setting
+        if (Schema::hasTable('app_settings')) {
+            config(['app.name' => \App\Models\AppSetting::get('app_name', config('app.name'))]);
+        }
+
         // Force HTTPS in Production
         if ($this->app->environment('production')) {
             URL::forceScheme('https');

@@ -8,28 +8,28 @@
 
         {{-- Stats Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div><p class="text-sm font-medium text-gray-500 dark:text-slate-400">Total Logins</p><p class="text-3xl font-bold text-gray-900 dark:text-slate-200 mt-1">{{ number_format($loginStats['total_logins']) }}</p></div>
                     <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center"><i class="bi bi-box-arrow-in-right text-blue-600 dark:text-blue-400 text-xl"></i></div>
                 </div>
                 <p class="text-xs text-gray-400 dark:text-slate-500 mt-3">{{ number_format($loginStats['unique_ips_24h']) }} unique IPs in 24h</p>
             </div>
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div><p class="text-sm font-medium text-gray-500 dark:text-slate-400">Successful</p><p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ number_format($loginStats['successful_logins']) }}</p></div>
                     <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center"><i class="bi bi-check-circle text-emerald-600 dark:text-emerald-400 text-xl"></i></div>
                 </div>
                 <p class="text-xs text-gray-400 dark:text-slate-500 mt-3">{{ $loginStats['total_logins'] > 0 ? round(($loginStats['successful_logins'] / $loginStats['total_logins']) * 100) : 0 }}% success rate</p>
             </div>
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div><p class="text-sm font-medium text-gray-500 dark:text-slate-400">Failed</p><p class="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">{{ number_format($loginStats['failed_logins']) }}</p></div>
                     <div class="w-12 h-12 bg-red-50 dark:bg-red-900/30 rounded-xl flex items-center justify-center"><i class="bi bi-x-circle text-red-600 dark:text-red-400 text-xl"></i></div>
                 </div>
                 <p class="text-xs text-gray-400 dark:text-slate-500 mt-3">{{ $loginStats['failed_last_hour'] }} in last hour</p>
             </div>
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div><p class="text-sm font-medium text-gray-500 dark:text-slate-400">Locked</p><p class="text-3xl font-bold text-amber-600 dark:text-amber-400 mt-1">{{ number_format($loginStats['locked_accounts']) }}</p></div>
                     <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/30 rounded-xl flex items-center justify-center"><i class="bi bi-lock text-amber-600 dark:text-amber-400 text-xl"></i></div>
@@ -64,13 +64,13 @@
         </div>
 
         {{-- Recent Failures --}}
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-x-auto">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-slate-200 flex items-center gap-2"><i class="bi bi-exclamation-triangle text-red-500"></i>Recent Failed Login Attempts</h3>
                 <a href="{{ route('admin.security.login-history', ['status' => 'failed']) }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">View all</a>
             </div>
             @if(count($recentFailures) > 0)
-                <div class="overflow-x-auto">
+                <div class="table-responsive-desktop overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                         <thead class="bg-gray-50/75 dark:bg-slate-800/75">
                             <tr>
@@ -92,8 +92,27 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Mobile Cards -->
+                <div class="cards-responsive-mobile p-4">
+                    @foreach($recentFailures as $failure)
+                        <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 mb-3">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-semibold text-slate-900 dark:text-slate-200">{{ $failure['user']['name'] ?? 'Unknown' }}</h3>
+                                    <p class="text-sm text-gray-500 font-mono mt-1">{{ $failure['ip_address'] }}</p>
+                                </div>
+                                <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($failure['login_at'])->diffForHumans() }}</span>
+                            </div>
+                            <div class="mt-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">{{ str_replace('_', ' ', $failure['reason'] ?? 'Unknown') }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
             @else
-                <div class="p-12 text-center">
+                <div class="p-8 sm:p-12 text-center">
                     <div class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4"><i class="bi bi-shield-check text-emerald-500 text-2xl"></i></div>
                     <p class="text-gray-500 dark:text-slate-400">No recent failed login attempts. Everything looks secure!</p>
                 </div>

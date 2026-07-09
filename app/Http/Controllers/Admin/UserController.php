@@ -115,4 +115,42 @@ class UserController extends Controller implements HasMiddleware
 
         return redirect()->route('admin.users.index')->with('success', 'Selected users deleted successfully.');
     }
+
+    public function export()
+    {
+        $fileName = 'users_export_' . date('Y-m-d_H-i-s') . '.csv';
+        $users = User::with('roles')->get();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = ['ID', 'Name', 'Email', 'Department', 'Phone Number', 'Status', 'Roles', 'Created At'];
+
+        $callback = function() use($users, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($users as $user) {
+                fputcsv($file, array(
+                    $user->id, 
+                    $user->name, 
+                    $user->email, 
+                    $user->department, 
+                    $user->phone_number, 
+                    $user->is_active ? 'Active' : 'Inactive', 
+                    $user->roles->pluck('name')->implode(', '), 
+                    $user->created_at
+                ));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

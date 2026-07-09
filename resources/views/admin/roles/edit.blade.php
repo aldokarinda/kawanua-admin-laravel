@@ -49,11 +49,11 @@
                                     @foreach($groupedPermissions as $module => $perms)
                                         <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-5 border border-gray-100 dark:border-slate-600">
                                             <h4 class="text-sm font-bold text-gray-800 dark:text-slate-200 uppercase tracking-wider mb-4">{{ $module }}</h4>
-                                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                                 @foreach($perms as $perm)
-                                                    <label class="inline-flex items-center bg-white dark:bg-slate-800 p-2.5 rounded-lg border {{ in_array($perm->name, $rolePermissions) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 dark:border-slate-600' }} cursor-pointer hover:border-blue-300 dark:hover:border-blue-500 transition-colors shadow-sm">
-                                                        <input type="checkbox" name="permissions[]" value="{{ $perm->name }}" {{ in_array($perm->name, $rolePermissions) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-slate-300">{{ explode('.', $perm->name)[1] ?? $perm->name }}</span>
+                                                    <label class="inline-flex items-center bg-white dark:bg-slate-800 p-2.5 rounded-lg border {{ in_array($perm->name, $rolePermissions) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 dark:border-slate-600' }} cursor-pointer hover:border-blue-300 dark:hover:border-blue-500 transition-colors shadow-sm w-full">
+                                                        <input type="checkbox" name="permissions[]" value="{{ $perm->name }}" {{ in_array($perm->name, $rolePermissions) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 shrink-0">
+                                                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-slate-300 truncate">{{ explode('.', $perm->name)[1] ?? $perm->name }}</span>
                                                     </label>
                                                 @endforeach
                                             </div>
@@ -67,9 +67,9 @@
                     </div>
                 </div>
 
-                <div class="pt-8 flex items-center justify-end gap-3">
-                    <a href="{{ route('admin.roles.index') }}" class="inline-flex items-center justify-center px-5 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">Cancel</a>
-                    <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 border border-transparent rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors">
+                <div class="pt-8 flex flex-col sm:flex-row items-center justify-end gap-3 w-full">
+                    <a href="{{ route('admin.roles.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">Cancel</a>
+                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 border border-transparent rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors">
                         <i class="bi bi-check-lg mr-2"></i> Update Role
                     </button>
                 </div>

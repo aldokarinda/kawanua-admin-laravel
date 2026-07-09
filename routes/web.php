@@ -28,12 +28,14 @@ use App\Http\Controllers\Admin\SecurityController;
 
 Route::middleware(['auth', 'ip.restrict'])->prefix('admin')->name('admin.')->group(function () {
     Route::delete('users/bulk-destroy', [UserController::class, 'bulkDestroy'])->name('users.bulk-destroy');
+    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
     Route::resource('users', UserController::class);
     Route::post('roles/{role}/clone', [RoleController::class, 'clone'])->name('roles.clone');
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('menus', MenuController::class);
-    Route::get('audit-logs', [App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('audit_logs.index');
+    Route::get('app-settings', [\App\Http\Controllers\Admin\AppSettingsController::class, 'index'])->name('app_settings.index');
+    Route::post('app-settings', [\App\Http\Controllers\Admin\AppSettingsController::class, 'update'])->name('app_settings.update');
 
     // Security Module
     Route::prefix('security')->name('security.')->middleware('role:Super Admin')->group(function () {

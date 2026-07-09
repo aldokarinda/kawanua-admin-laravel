@@ -21,7 +21,7 @@
         </div>
 
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
-            <div class="overflow-x-auto max-h-[calc(100vh-20rem)] overflow-y-auto">
+            <div class="table-responsive-desktop overflow-x-auto max-h-[calc(100vh-20rem)] overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50/75 dark:bg-slate-800/75">
                         <tr>
@@ -76,8 +76,58 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobile Cards -->
+            <div class="cards-responsive-mobile p-4">
+                @forelse($roles as $role)
+                    <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 mb-3 shadow-sm">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $role->name }}</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 truncate mt-0.5" title="{{ $role->description }}">{{ $role->description ?? 'No description' }}</p>
+                            </div>
+                            <div class="ml-3 flex-shrink-0 flex gap-1.5">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-600 text-gray-800 dark:text-slate-300">
+                                    <i class="bi bi-people text-xs mr-1"></i>{{ $role->users_count }}
+                                </span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300">
+                                    <i class="bi bi-shield-lock text-xs mr-1"></i>{{ $role->permissions_count }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <a href="{{ route('admin.roles.edit', $role) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 rounded-md hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors">
+                                <i class="bi bi-pencil text-xs"></i> Edit
+                            </a>
+
+                            <form action="{{ route('admin.roles.clone', $role) }}" method="POST" class="inline-block">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
+                                    <i class="bi bi-copy text-xs"></i> Clone
+                                </button>
+                            </form>
+
+                            @if($role->name !== 'super-admin')
+                                <form id="delete-form-mobile-{{ $role->id }}" action="{{ route('admin.roles.destroy', $role) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $role->id }}', 'the role {{ addslashes($role->name) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                                        <i class="bi bi-trash text-xs"></i> Delete
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-12 text-slate-500 dark:text-slate-400">
+                        <i class="bi bi-shield text-4xl block mb-3 text-slate-300 dark:text-slate-600"></i>
+                        <p class="text-sm">No roles found.</p>
+                    </div>
+                @endforelse
+            </div>
+
             @if($roles->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                <div class="px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
                     {{ $roles->links() }}
                 </div>
             @endif

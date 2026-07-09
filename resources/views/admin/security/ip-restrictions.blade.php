@@ -2,12 +2,12 @@
     <div class="py-6 px-4 sm:px-6 lg:px-8" x-data="{ openAddModal: false, editMode: false, currentIp: { id: '', ip_address: '', type: '{{ $type }}', reason: '', expires_at: '', is_active: true } }">
         <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard')], ['label' => 'Security Center', 'url' => route('admin.security.index')], ['label' => 'IP Restrictions']]" />
         
-        <div class="sm:flex sm:items-center sm:justify-between mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-slate-200">IP Access Control</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Restrict access to the application by Whitelisting or Blacklisting IP addresses.</p>
             </div>
-            <div class="mt-4 sm:mt-0">
+            <div>
                 <button @click="openAddModal = true; editMode = false; currentIp = { id: '', ip_address: '', type: '{{ $type }}', reason: '', expires_at: '', is_active: true }" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-semibold rounded-lg text-white bg-primary-600 hover:bg-primary-700 shadow-sm transition-colors">
                     <i class="bi bi-plus-lg mr-2"></i> Add IP Restriction
                 </button>
@@ -42,7 +42,7 @@
 
         {{-- Table --}}
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="table-responsive-desktop overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
@@ -112,8 +112,59 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobile Cards -->
+            <div class="cards-responsive-mobile p-4">
+                @forelse($restrictions as $restrict)
+                    <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 mb-3 shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="font-semibold text-slate-900 dark:text-slate-200 font-mono">{{ $restrict->ip_address }}</h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ $restrict->reason ?? '-' }}</p>
+                            </div>
+                            <form action="{{ route('admin.security.ip-restrictions.toggle', $restrict->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium {{ $restrict->is_active ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-400' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $restrict->is_active ? 'bg-emerald-500' : 'bg-slate-400' }}"></span>
+                                    {{ $restrict->is_active ? 'Active' : 'Inactive' }}
+                                </button>
+                            </form>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-gray-500 dark:text-slate-400 mt-2">
+                            <span>Expires: {{ $restrict->expires_at ? $restrict->expires_at->format('M d, Y') : 'Never' }}</span>
+                            <span>Created: {{ $restrict->created_at->format('M d, Y') }}</span>
+                        </div>
+                        <div class="flex justify-end space-x-3 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <button @click="
+                                openAddModal = true;
+                                editMode = true;
+                                currentIp = {
+                                    id: '{{ $restrict->id }}',
+                                    ip_address: '{{ $restrict->ip_address }}',
+                                    type: '{{ $restrict->type }}',
+                                    reason: '{{ addslashes($restrict->reason) }}',
+                                    expires_at: '{{ $restrict->expires_at ? $restrict->expires_at->format('Y-m-d\TH:i') : '' }}',
+                                    is_active: {{ $restrict->is_active ? 'true' : 'false' }}
+                                }
+                            " class="text-primary-600 hover:text-primary-900 dark:hover:text-primary-400">
+                                Edit
+                            </button>
+                            <form action="{{ route('admin.security.ip-restrictions.destroy', $restrict->id) }}" method="POST" id="delete-ip-form-mobile-{{ $restrict->id }}" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="confirmDelete('delete-ip-form-mobile-{{ $restrict->id }}', 'this IP restriction')" class="text-red-600 hover:text-red-900 dark:hover:text-red-400">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-8 text-gray-500"><i class="bi bi-inbox text-4xl block mb-2"></i>No IP restrictions defined.</div>
+                @endforelse
+            </div>
+
             @if($restrictions->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 dark:border-slate-700">
+                <div class="px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-slate-700">
                     {{ $restrictions->links() }}
                 </div>
             @endif

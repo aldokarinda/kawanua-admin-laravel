@@ -38,9 +38,9 @@
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('admin.regions.index') }}" class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Cancel</a>
-                    <x-primary-button>Update Region</x-primary-button>
+                <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3 w-full">
+                    <a href="{{ route('admin.regions.index') }}" class="w-full sm:w-auto text-center px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Cancel</a>
+                    <x-primary-button class="w-full sm:w-auto justify-center">Update Region</x-primary-button>
                 </div>
             </form>
         </div>

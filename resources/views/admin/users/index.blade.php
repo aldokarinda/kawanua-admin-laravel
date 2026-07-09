@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <div class="py-6 px-4 sm:px-6 lg:px-8"
+    <div class="space-y-6"
          x-data="{
                 selected: [],
                 selectAll: false,
@@ -104,21 +104,21 @@
             }">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('dashboard')],
-            ['label' => 'User Management']
+            ['label' => 'Administration', 'url' => '#'],
+            ['label' => 'Users']
         ]" />
 
         <!-- Page Header -->
-        <div class="sm:flex sm:items-center sm:justify-between mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-slate-200 tracking-tight">User Management</h2>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-slate-200 tracking-tight">Users</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">A list of all the users in your account including their name, department, email and role.</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex gap-2">
-                <button type="button" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-slate-900 transition-colors">
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.users.export') }}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-slate-900 transition-colors">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Export
-                </button>
+                </a>
                 <button type="button" @click="showCreateModal = true" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-slate-900 transition-colors">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Add New User
@@ -130,7 +130,34 @@
         <div id="users-table-container" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
             <!-- Filter Bar -->
             <div class="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
-                <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-col sm:flex-row gap-4">
+                <!-- Mobile: Collapsible filters -->
+                <div class="sm:hidden">
+                    <button @click="showFilters = !showFilters" type="button" class="w-full flex items-center justify-between px-3 py-2 bg-gray-100 dark:bg-slate-700 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <span><i class="bi bi-funnel mr-2"></i> Filters</span>
+                        <i class="bi" :class="showFilters ? 'bi-chevron-up' : 'bi-chevron-down'" class="ml-2"></i>
+                    </button>
+                    <div x-show="showFilters" x-transition x-cloak class="mt-3 space-y-3">
+                        <form method="GET" action="{{ route('admin.users.index') }}" class="space-y-3">
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <i class="bi bi-search text-gray-400"></i>
+                                </span>
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search users..." class="w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 dark:text-slate-200">
+                            </div>
+                            <select name="status" class="w-full py-2 px-3 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 dark:text-slate-200">
+                                <option value="">All Status</option>
+                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            <div class="flex gap-2">
+                                <button type="submit" class="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700">Filter</button>
+                                <a href="{{ route('admin.users.index') }}" class="px-4 py-2 bg-gray-100 dark:bg-slate-600 text-gray-600 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-slate-500">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- Desktop: Inline filters -->
+                <form method="GET" action="{{ route('admin.users.index') }}" class="hidden sm:flex gap-3 sm:gap-4">
                     <div class="flex-1 relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg class="w-5 h-5 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -163,7 +190,7 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto max-h-[calc(100vh-20rem)] overflow-y-auto">
+            <div class="table-responsive-desktop overflow-x-auto max-h-[calc(100vh-20rem)] overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50/75 dark:bg-slate-800/75">
                         <tr>
@@ -258,9 +285,80 @@
                 </table>
             </div>
 
+            <!-- Mobile Cards -->
+            <div class="cards-responsive-mobile p-4">
+                @foreach($users as $user)
+                    <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 mb-3 shadow-sm">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center flex-1 min-w-0">
+                                <div class="w-11 h-11 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400 flex items-center justify-center font-bold text-sm uppercase flex-shrink-0 ring-2 ring-white dark:ring-slate-800">
+                                    @if($user->avatar)
+                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-11 h-11 rounded-full object-cover">
+                                    @else
+                                        {{ substr($user->name, 0, 1) }}
+                                    @endif
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <h3 class="font-semibold text-slate-900 dark:text-slate-200 truncate">{{ $user->name }}</h3>
+                                    <p class="text-xs text-gray-500 dark:text-slate-400 truncate">{{ $user->email }}</p>
+                                </div>
+                            </div>
+                            <div class="ml-2 flex-shrink-0">
+                                @if($user->is_active)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300">
+                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1"></span>
+                                        Active
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-600 text-gray-800 dark:text-slate-300">
+                                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1"></span>
+                                        Inactive
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 text-sm">
+                            <div class="flex items-center text-gray-600 dark:text-slate-400">
+                                <i class="bi bi-building text-xs text-gray-400 w-4 mr-2"></i>
+                                <span class="text-xs">{{ $user->department ?? 'No department' }}</span>
+                            </div>
+                            <div class="flex items-center text-gray-500 dark:text-slate-400">
+                                <i class="bi bi-clock text-xs text-gray-400 w-4 mr-2"></i>
+                                <span class="text-xs">Last login: {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never' }}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-1 mt-2.5">
+                            @forelse($user->roles as $role)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300">
+                                    {{ $role->name }}
+                                </span>
+                            @empty
+                                <span class="text-xs text-gray-400 dark:text-slate-500">No Role</span>
+                            @endforelse
+                        </div>
+
+                        <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 rounded-md hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors">
+                                <i class="bi bi-pencil text-xs"></i> Edit
+                            </a>
+                            @if($user->id !== 1 && !$user->hasRole('super-admin'))
+                                <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $user->id }}', 'the user {{ addslashes($user->name) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                                    <i class="bi bi-trash text-xs"></i> Delete
+                                </button>
+                                <form id="delete-form-mobile-{{ $user->id }}" action="{{ route('admin.users.destroy', $user) }}" method="POST" class="hidden">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
             <!-- Pagination -->
             @if($users->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                <div class="px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
                     {{ $users->links() }}
                 </div>
             @endif
@@ -278,7 +376,7 @@
                     <div class="fixed inset-0 transition-opacity bg-slate-900/50 backdrop-blur-sm" @click="showCreateModal = false"></div>
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                     
-                    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100 dark:border-slate-700"
+                    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all w-full sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100 dark:border-slate-700"
                          x-transition:enter="transition ease-out duration-300"
                          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
@@ -286,7 +384,7 @@
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                         
-                        <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                        <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-slate-200">Add New User</h3>
                             <button @click="showCreateModal = false" class="text-gray-400 hover:text-gray-500 dark:hover:text-slate-300">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -294,12 +392,12 @@
                         </div>
 
                         <form @submit.prevent="submitCreateForm()">
-                            <div class="p-6 space-y-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
+                            <div class="p-4 sm:p-6 space-y-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
                                 <template x-if="errors.general">
                                     <div class="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm" x-text="errors.general"></div>
                                 </template>
 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Full Name <span class="text-red-500">*</span></label>
                                         <input type="text" x-model="formData.name" class="w-full rounded-lg border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-shadow" placeholder="John Doe" required>
@@ -339,7 +437,7 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-950 dark:text-slate-200 mb-3">Role Assignment</label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                         @foreach($roles as $role)
                                         <label class="inline-flex items-center p-3 border border-gray-200 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 hover:border-blue-300 transition-colors">
                                             <input type="checkbox" x-model="formData.roles" value="{{ $role->name }}" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
@@ -364,7 +462,7 @@
                                 </div>
                             </div>
 
-                            <div class="px-6 py-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-end gap-3 bg-gray-50 dark:bg-slate-800/50">
+                            <div class="px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-slate-700 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 bg-gray-50 dark:bg-slate-800/50">
                                 <button type="button" @click="showCreateModal = false" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">Cancel</button>
                                 <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors">
                                     <i class="bi bi-check-lg mr-2"></i> Save User

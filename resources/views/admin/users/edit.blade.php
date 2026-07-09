@@ -4,7 +4,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('dashboard')],
-            ['label' => 'User Management', 'url' => route('admin.users.index')],
+            ['label' => 'Users', 'url' => route('admin.users.index')],
             ['label' => 'Edit User: ' . $user->name]
         ]" />
 
