@@ -69,4 +69,15 @@ Route::middleware(['auth', 'ip.restrict'])->prefix('admin')->name('admin.')->gro
         Route::delete('sessions/{sessionId}', [SecurityController::class, 'destroySession'])->name('sessions.destroy');
         Route::post('sessions/flush', [SecurityController::class, 'flushSessions'])->name('sessions.flush');
     });
+
+    // Master Data
+    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+    Route::resource('tags', \App\Http\Controllers\Admin\TagController::class);
+    Route::resource('regions', \App\Http\Controllers\Admin\RegionController::class);
+
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('visitors', [\App\Http\Controllers\Admin\ReportController::class, 'visitors'])->name('visitors');
+        Route::get('transactions', [\App\Http\Controllers\Admin\ReportController::class, 'transactions'])->name('transactions');
+    });
 });

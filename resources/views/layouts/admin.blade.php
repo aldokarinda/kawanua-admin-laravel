@@ -81,7 +81,6 @@
         [class*="sidebar-subitem active"][class*="justify-center"]:hover {
             transform: scale(1.05);
         }
-        }
         .sidebar-subitem:not(.active):hover {
             background: rgba(255, 255, 255, 0.08);
         }
@@ -124,7 +123,8 @@
                 'sidebar-collapsed': sidebarCollapsed
             }"
             :style="sidebarCollapsed ? 'width: 5rem;' : 'width: 16rem;'"
-            class="sidebar-premium fixed inset-y-0 left-0 z-30 transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col flex-shrink-0 shadow-2xl">
+            class="sidebar-premium fixed inset-y-0 left-0 z-30 lg:translate-x-0 lg:static lg:inset-0 flex flex-col flex-shrink-0 shadow-2xl"
+            style="transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s ease-in-out;">
 
             <!-- Logo Area -->
             <div class="sidebar-logo-area flex items-center h-16 transition-all duration-300"
@@ -160,7 +160,16 @@
 
             <!-- Navigation Links -->
             <nav class="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
+                @php $hasRenderedGroupDivider = false; @endphp
                 @foreach($sidebarMenus as $menu)
+                    {{-- Section divider before first parent group --}}
+                    @if($menu->children->isNotEmpty() && !$hasRenderedGroupDivider)
+                        @php $hasRenderedGroupDivider = true; @endphp
+                        <div x-show="sidebarCollapsed" x-cloak class="sidebar-section-divider">
+                            <span></span>
+                        </div>
+                    @endif
+
                     @if($menu->children->isEmpty() && ($menu->route_name || $menu->url))
                         @php
                             $url = '#';
@@ -204,7 +213,7 @@
                         <div x-data="{ expanded: {{ $isActiveGroup ? 'true' : 'false' }} }" class="mt-0.5">
                             <!-- Parent group button -->
                             <button @click="if(!sidebarCollapsed) { expanded = !expanded } else { sidebarCollapsed = false; $nextTick(() => { expanded = true }); }"
-                                    class="sidebar-item {{ $isActiveGroup ? 'active' : '' }}"
+                                    class="sidebar-item {{ $isActiveGroup ? 'active-group' : '' }}"
                                     :class="sidebarCollapsed ? 'justify-center' : ''"
                                     x-bind:data-sidebar-tooltip="sidebarCollapsed ? '{{ addslashes($menu->name) }}' : null">
                                 <span class="sidebar-menu-icon">
@@ -243,6 +252,10 @@
                     @endif
                 @endforeach
             </nav>
+
+            <div x-show="!sidebarCollapsed" class="px-4 py-2 text-center text-[10px] text-gray-400 dark:text-slate-500">
+                Copyright &copy; {{ date('Y') }} Aldo Karinda,<br>UNKLAB Business School
+            </div>
 
             <!-- Bottom Profile Card -->
             <div class="sidebar-profile" :class="sidebarCollapsed ? 'p-3' : 'p-4'">

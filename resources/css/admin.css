@@ -78,9 +78,11 @@ main {
    PREMIUM SIDEBAR STYLES
    =================================================== */
 
-/* Sidebar base */
+/* Sidebar base — with subtle noise texture overlay */
 .sidebar-premium {
-    background: linear-gradient(165deg, var(--sidebar-bg-from) 0%, var(--sidebar-bg-to) 100%);
+    background:
+        url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M5 0h1L0 5V4zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(165deg, var(--sidebar-bg-from) 0%, var(--sidebar-bg-to) 100%);
     position: relative;
     overflow: hidden;
 }
@@ -144,73 +146,22 @@ main {
     padding: 0.75rem 1rem 0.25rem;
 }
 
-/* Menu item base */
-.sidebar-menu-item {
-    position: relative;
+/* Section divider for collapsed sidebar mode */
+.sidebar-section-divider {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.625rem 0.875rem;
-    border-radius: 0.625rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--sidebar-text);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    overflow: hidden;
-    width: 100%;
-    border: 1px solid transparent;
+    justify-content: center;
+    padding: 0.5rem 0;
+}
+.sidebar-section-divider span {
+    display: block;
+    width: 1.25rem;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
 }
 
-/* Shimmer hover overlay */
-.sidebar-menu-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(255,255,255,0) 0%,
-        rgba(255,255,255,0.025) 50%,
-        rgba(255,255,255,0) 100%
-    );
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    pointer-events: none;
-}
-
-.sidebar-menu-item:hover::before {
-    opacity: 1;
-}
-
-.sidebar-menu-item:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Active menu item */
-.sidebar-menu-item.active {
-    background: #ffffff;
-    color: #1e3a8a;
-    border-color: #ffffff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    font-weight: 700;
-}
-
-/* Active left glow bar */
-.sidebar-menu-item.active::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 60%;
-    border-radius: 0 4px 4px 0;
-    background: #3b82f6;
-    box-shadow: 0 0 8px rgba(59,130,246,0.6);
-}
+/* ===================================================
+   Shared Sidebar Components (Icon, Label, Chevron)
+   =================================================== */
 
 /* Icon container */
 .sidebar-menu-icon {
@@ -221,19 +172,22 @@ main {
     justify-content: center;
     border-radius: 0.375rem;
     flex-shrink: 0;
-    background: transparent; /* No visible box by default */
+    background: transparent;
     transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     font-size: 1rem;
     color: rgba(255,255,255,0.55);
 }
 
-.sidebar-menu-item:hover .sidebar-menu-icon {
-    color: #ffffff;
+/* Let icon <i> elements with their own Tailwind color classes override */
+.sidebar-item:hover .sidebar-menu-icon,
+.sidebar-item:hover .sidebar-menu-icon i {
+    color: #ffffff !important;
     transform: scale(1.1);
 }
 
-.sidebar-menu-item.active .sidebar-menu-icon {
-    color: #1e3a8a;
+.sidebar-item.active .sidebar-menu-icon,
+.sidebar-item.active .sidebar-menu-icon i {
+    color: #1e3a8a !important;
     transform: scale(1.05);
 }
 
@@ -255,7 +209,7 @@ main {
     flex-shrink: 0;
 }
 
-.sidebar-menu-item:hover .sidebar-chevron {
+.sidebar-item:hover .sidebar-chevron {
     opacity: 0.8;
 }
 
@@ -270,59 +224,24 @@ main {
     margin-top: 0.25rem;
     margin-left: 1rem;
     padding-left: 1.25rem;
-    border-left: 1px solid var(--sidebar-border);
-    space-y: 0.125rem;
-}
-
-.sidebar-submenu-item {
+    border-left: 1px dashed rgba(129, 140, 248, 0.25);
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.78rem;
-    font-weight: 450;
-    color: var(--sidebar-text-muted);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    margin-bottom: 0.125rem;
 }
 
-/* Dot indicator */
-.sidebar-submenu-item::before {
+/* Gradient glow on the connector line */
+.sidebar-submenu::before {
     content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.4;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-}
-
-.sidebar-submenu-item:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.sidebar-submenu-item:hover::before {
-    opacity: 0.8;
-    background: #a5b4fc;
-    box-shadow: 0 0 6px rgba(165,180,252,0.7);
-}
-
-.sidebar-submenu-item.active {
-    color: #1e3a8a;
-    font-weight: 700;
-    background: #ffffff;
-    border-radius: 0.5rem;
-}
-
-.sidebar-submenu-item.active::before {
-    background: #1e3a8a;
-    box-shadow: 0 0 8px rgba(30,58,138,0.4);
-    opacity: 1;
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        rgba(129, 140, 248, 0.4) 0%,
+        rgba(129, 140, 248, 0.08) 100%
+    );
+    pointer-events: none;
 }
 
 /* ===================================================
@@ -349,11 +268,16 @@ main {
     flex-shrink: 0;
     box-shadow: 0 0 0 2px rgba(165,180,252,0.4), 0 2px 8px rgba(0,0,0,0.3);
     text-transform: uppercase;
-    transition: box-shadow 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Ring pulse on hover */
 .sidebar-avatar:hover {
-    box-shadow: 0 0 0 3px rgba(165,180,252,0.6), 0 4px 12px rgba(0,0,0,0.4);
+    transform: scale(1.08);
+    box-shadow:
+        0 0 0 3px rgba(165,180,252,0.4),
+        0 0 0 6px rgba(165,180,252,0.15),
+        0 4px 12px rgba(0,0,0,0.4);
 }
 
 /* Online dot */
@@ -425,7 +349,7 @@ main {
     position: absolute;
     left: calc(100% + 12px);
     top: 50%;
-    transform: translateY(-50%) scale(0.92);
+    transform: translateY(-50%) translateX(-6px) scale(0.92);
     background: rgba(10, 8, 80, 0.95);
     color: white;
     font-size: 0.75rem;
@@ -435,14 +359,14 @@ main {
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
-    transition: all 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08);
     z-index: 99;
 }
 
 [data-sidebar-tooltip]:hover::after {
     opacity: 1;
-    transform: translateY(-50%) scale(1);
+    transform: translateY(-50%) translateX(0) scale(1);
 }
 
 /* ===================================================
@@ -459,13 +383,12 @@ main {
     }
 }
 
-.sidebar-menu-item,
-.sidebar-submenu-item {
+.sidebar-item {
     animation: menuItemEnter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ===================================================
-   Sidebar Item (New Design)
+   Sidebar Item (Enhanced Design)
    =================================================== */
 .sidebar-item {
     position: relative;
@@ -486,6 +409,25 @@ main {
     margin-bottom: 0.125rem;
 }
 
+/* Spotlight hover overlay */
+.sidebar-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(129,140,248,0.12) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.sidebar-item:hover::before {
+    opacity: 1;
+}
+
 /* Hover effect */
 .sidebar-item:hover {
     background: rgba(255, 255, 255, 0.15);
@@ -493,7 +435,14 @@ main {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Active state */
+/* Click bounce micro-interaction */
+.sidebar-item:active,
+.sidebar-subitem:active {
+    transform: scale(0.97);
+    transition: transform 0.1s ease;
+}
+
+/* Active state — leaf item (actual page link) */
 .sidebar-item.active {
     background: #ffffff;
     color: #1e3a8a;
@@ -502,7 +451,21 @@ main {
     font-weight: 700;
 }
 
-/* Active glow bar */
+/* Active state — parent group (glassmorphism) */
+.sidebar-item.active-group {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sidebar-item.active-group .sidebar-menu-icon,
+.sidebar-item.active-group .sidebar-menu-icon i {
+    color: #a5b4fc !important;
+}
+
+/* Active glow bar — gradient + slide-in animation */
 .sidebar-item.active::after {
     content: '';
     position: absolute;
@@ -512,8 +475,10 @@ main {
     width: 4px;
     height: 60%;
     border-radius: 0 4px 4px 0;
-    background: #3b82f6;
-    box-shadow: 0 0 8px rgba(59,130,246,0.6);
+    background: linear-gradient(180deg, #818cf8 0%, #4f46e5 100%);
+    box-shadow: 0 0 12px rgba(129, 140, 248, 0.7),
+                0 0 4px rgba(79, 70, 229, 0.5);
+    animation: glowBarSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Active hover */
@@ -522,7 +487,7 @@ main {
 }
 
 /* ===================================================
-   Sidebar Subitem (New Design)
+   Sidebar Subitem (Enhanced Design)
    =================================================== */
 .sidebar-subitem {
     position: relative;
@@ -538,6 +503,8 @@ main {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 0.125rem;
     cursor: pointer;
+    /* Staggered cascade entrance animation */
+    animation: submenuItemEnter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Dot indicator */
@@ -581,6 +548,44 @@ main {
 
 .sidebar-subitem.active:hover {
     transform: translateX(6px);
+}
+
+/* Staggered cascade delays for submenu items */
+.sidebar-submenu .sidebar-subitem:nth-child(1) { animation-delay: 0ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(2) { animation-delay: 40ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(3) { animation-delay: 80ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(4) { animation-delay: 120ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(5) { animation-delay: 160ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(6) { animation-delay: 200ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(7) { animation-delay: 240ms; }
+.sidebar-submenu .sidebar-subitem:nth-child(8) { animation-delay: 280ms; }
+
+/* ===================================================
+   New Keyframes
+   =================================================== */
+
+/* Glow bar slides in from zero height */
+@keyframes glowBarSlideIn {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    to {
+        height: 60%;
+        opacity: 1;
+    }
+}
+
+/* Submenu items cascade in from left+top */
+@keyframes submenuItemEnter {
+    from {
+        opacity: 0;
+        transform: translateX(-8px) translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
 }
 
 /* ===================================================
@@ -689,4 +694,49 @@ main {
 
 .sidebar-collapsed .sidebar-item.active .sidebar-menu-icon {
     margin-right: 0 !important;
+}
+
+/* ===================================================
+   Sidebar Badge (notification counter)
+   =================================================== */
+.sidebar-badge {
+    margin-left: auto;
+    padding: 0.0625rem 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    line-height: 1.1rem;
+    border-radius: 9999px;
+    background: #ef4444;
+    color: #ffffff;
+    min-width: 1.1rem;
+    text-align: center;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+    transition: transform 0.2s ease;
+}
+.sidebar-item:hover .sidebar-badge {
+    transform: scale(1.1);
+}
+.sidebar-item.active .sidebar-badge {
+    background: #dc2626;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+/* ===================================================
+   Keyboard Shortcut Hint
+   =================================================== */
+.shortcut-hint {
+    font-size: 0.6rem;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.35);
+    opacity: 0;
+    transition: opacity 0.2s;
+    margin-left: auto;
+}
+.sidebar-item:hover .shortcut-hint {
+    opacity: 1;
 }

@@ -37,7 +37,22 @@ class RoleAndPermissionSeeder extends Seeder
             'menu.delete',
             'audit.view',
             'security.view',
-            'security.edit'
+            'security.edit',
+            'setting.view',
+            'setting.edit',
+            'category.view',
+            'category.create',
+            'category.edit',
+            'category.delete',
+            'tag.view',
+            'tag.create',
+            'tag.edit',
+            'tag.delete',
+            'region.view',
+            'region.create',
+            'region.edit',
+            'region.delete',
+            'report.view'
         ];
 
         foreach ($permissions as $permission) {

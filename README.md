@@ -1,9 +1,23 @@
 # Kawanua Admin Laravel
 
-**Kawanua Admin Laravel** is a premium, modern, and lightweight admin dashboard template built on top of Laravel 13, Tailwind CSS, and Alpine.js. It is designed to be "Better Than Mazer", offering a cleaner SaaS-like aesthetic, a dynamic menu builder, a robust Role-Based Access Control (RBAC) system, and a comprehensive Security Suite right out of the box.
+**Kawanua Admin Laravel** is a premium, modern, and lightweight admin dashboard template built on top of Laravel 13, Tailwind CSS, and Alpine.js. It is offering a cleaner SaaS-like aesthetic, a dynamic menu builder, a robust Role-Based Access Control (RBAC) system, and a comprehensive Security Suite right out of the box.
 
-![Kawanua Admin Preview](https://via.placeholder.com/1200x600.png?text=Kawanua+Admin+Laravel+-+Premium+SaaS+Dashboard)
+## 📸 Screenshots
 
+### 1. Dashboard
+![Dashboard](/screenshots/dashboard.png)
+
+### 2. User Management
+![User Management](/screenshots/users.png)
+
+### 3. Role Management
+![Role Management](/screenshots/roles.png)
+
+### 4. Security Dashboard
+![Security Dashboard](/screenshots/security.png)
+
+### 5. Master Data
+![Categories](/screenshots/categories.png)
 ## ✨ Key Features
 
 - **Built with Tailwind CSS & Alpine.js**: Lightning fast, zero jQuery, and no bulky CSS frameworks.
@@ -112,3 +126,5 @@ After running the seeder, you can log in with the default Super Admin account:
 ## 📄 License
 
 This project is licensed under the Non-Commercial Software License Agreement. It is **free for personal, educational, and other non-commercial purposes**. Using this software for any commercial purpose requires a paid commercial license. See the [LICENSE](LICENSE) file for details.
+
+Copyright &copy; 2026 Aldo Karinda, UNKLAB Business School

@@ -27,6 +27,15 @@ class SecuritySettingService
     public function getGroupedSettings(): array
     {
         return [
+            'app_settings' => [
+                'title' => 'App Settings',
+                'icon' => 'bi-window-sidebar',
+                'description' => 'General application configurations like App Name.',
+                'settings' => SecuritySetting::whereIn('key', [
+                    'app_name',
+                    'app_description',
+                ])->get(),
+            ],
             'password_policy' => [
                 'title' => 'Password Policy',
                 'icon' => 'bi-shield-lock',
